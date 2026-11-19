@@ -1,10 +1,12 @@
 # Files from project-k-median
 
 These files are copied from the project `bound-195` of
-[`epfl-thl2/project-k-median`](https://github.com/epfl-thl2/project-k-median), at commit
-`d87e2a20376896ab72fe005a493b3af970a0f82d`. All of their code was written by Codex. Like the rest
-of this repository, they are released under Apache-2.0 (see [LICENSE](../../LICENSE)). That
-repository is on Lean and Mathlib 4.30.0-rc1, so it cannot be a dependency here.
+[`epfl-thl2/project-k-median`](https://github.com/epfl-thl2/project-k-median) (Copyright (c) 2026
+Rares Buhai, Apache-2.0, see [LICENSE](LICENSE)), at commit
+`d87e2a20376896ab72fe005a493b3af970a0f82d`; the next commit,
+`defb0d6edb3f1b57c02173655d35160c5c520805`, adds the licence and changes no Lean file. All of
+their code was written by Codex. That repository is on Lean and Mathlib 4.30.0-rc1, so it cannot
+be a dependency here.
 
 They prove the bound on the factor-revealing program in *A Better-than-2 Approximation for
 k-Median*, Part I: *The Power of General Bids*

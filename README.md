@@ -85,7 +85,7 @@ checked. CI runs the same command for every paper on each push.
 
 ## License
 
-Apache-2.0, see [LICENSE](LICENSE). The files copied into `Imported/TauCeti` and `Imported/OAI`
-are Apache-2.0 as well and keep their own `LICENSE` files and notices.
+Apache-2.0, see [LICENSE](LICENSE). The files copied into `Imported/TauCeti`, `Imported/OAI`
+and `Imported/KMedian195` are Apache-2.0 as well and keep their own `LICENSE` files and notices.
 
 *Formalized by [Claude Code](https://claude.com/claude-code) and [Codex](https://openai.com/codex/).*

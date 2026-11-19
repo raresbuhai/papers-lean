@@ -117,8 +117,8 @@ The bound on the factor-revealing program [BCFGJPSSV26a, Theorem 4.4] is
 [BCFGJPSSV26a, Definition 4.1] with the bid `[α - γ d]⁺` has value at most `2 - (γ - 1)²`.
 [Greedy/FRP.lean](Greedy/FRP.lean) applies it with `γ = 1.224`, so `2 - 0.224² = 1.949824`. The
 library [KMedian195](../Imported/KMedian195) is copied from the project `bound-195` of
-[`epfl-thl2/project-k-median`](https://github.com/epfl-thl2/project-k-median), at commit
-`d87e2a20376896ab72fe005a493b3af970a0f82d`. All of its code was written by Codex; its
+[`epfl-thl2/project-k-median`](https://github.com/epfl-thl2/project-k-median) (Apache-2.0), at
+commit `d87e2a20376896ab72fe005a493b3af970a0f82d`. All of its code was written by Codex; its
 [README](../Imported/KMedian195/README.md) lists the changes made for our Lean and Mathlib.
 
 ## Map of the files
