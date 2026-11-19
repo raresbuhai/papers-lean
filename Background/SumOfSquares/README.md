@@ -1,4 +1,4 @@
-# Sum of squares: design notes
+# Sum of squares
 
 The main result is the sum-of-squares algorithm, stated in [Solver.lean](Solver.lean) and proved
 as `SoS.Solver.exists_solver` ([Algorithm/Correct.lean](Algorithm/Correct.lean)): one multitape

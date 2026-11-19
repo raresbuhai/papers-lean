@@ -1,5 +1,7 @@
 # Formalized papers
 
+[![CI](https://github.com/raresbuhai/formalization-of-my-research/actions/workflows/ci.yml/badge.svg)](https://github.com/raresbuhai/formalization-of-my-research/actions/workflows/ci.yml)
+
 Lean 4 formalizations of papers by [Rares-Darius Buhai](https://raresbuhai.com/), each with its main
 results stated in `Challenge.lean` and proved in `Solution.lean`:
 
@@ -52,16 +54,28 @@ libraries, but not each other.
 Like Mathlib, files use Lean's module system: each starts with `module`, imports with
 `public import`, and puts declarations in a `public section`.
 
+## Building
+
+Install Lean with [elan](https://github.com/leanprover/elan); it reads the version from
+`lean-toolchain`. Then:
+
+```sh
+git clone https://github.com/raresbuhai/formalization-of-my-research.git
+cd formalization-of-my-research
+scripts/get-cache.sh  # download prebuilt Mathlib and complexitylib
+lake build            # everything, or `lake build BKS23` for one paper
+```
+
+The full build takes about 40 minutes on GitHub's runners.
+
 ## Checking a paper
 
 To check what a paper proves, read its `Challenge.lean` and what that file imports (for `BKS23`,
-`Model.lean`). Then run
-`lake comparator` (see `lake help comparator`), which checks that `Solution.lean`
-proves exactly those statements, is accepted by the kernel, and uses only the axioms listed in
-`comparator.json`:
+`Model.lean`). Then run `lake comparator` (see `lake help comparator`), which checks that
+`Solution.lean` proves exactly those statements, is accepted by the kernel, and uses only the
+axioms listed in `comparator.json`:
 
 ```sh
-scripts/get-cache.sh  # download prebuilt Mathlib and complexitylib
 lake comparator --inadvisably-no-sandbox --config BKS23/comparator.json
 ```
 
