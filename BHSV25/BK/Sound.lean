@@ -6,12 +6,28 @@ import Mathlib.Data.List.GetD
 /-!
 # Soundness of the reduction
 
-`BHSV25/BK/README.md`, Section 3. An independent set `S` of one copy gives folded long codes `f_v`
-(`BHSV25.BK.fold`) under which every vertex of `S` whose `a` is not `0` accepts; the accepting
-vertices are counted through the averaged long codes `g_u` (`BHSV25.BK.avgTable`, of mean `1/2`
-by folding), whose subcube averages have small `t`-th moments by It Ain't Over Till It's Over
-unless `u` is one of the few vertices with an influential coordinate
-(`BHSV25.BK.Prm.sound`).
+Step 4 of the route in `BHSV25/BansalKhot.lean` (`BHSV25.BK.Prm.sound`). Let `S` be an
+independent set of `γ N` vertices of one copy.
+
+1. **Self-conflicting vertices.** A vertex conflicts with itself only if two of its constraints
+   have the same right vertex; parallel constraints agree, so their demands coincide, and all
+   coordinates are free: `a = 0`. These are `N / M^R ≤ N / M ≤ γ N / 4` vertices; without them,
+   `S'` has at least `3 γ N / 4`.
+2. **Folded long codes** (`BHSV25.BK.fold`): `f_v(w) = 1` if some demand of `S'` at `v` contains
+   `w`, `0` if one contains `¬w`, and `w_0` otherwise. Independence makes this well defined and
+   folded, and every vertex of `S'` accepts: `f_{v_p}(π_p y) = 1` for all `p` and `y ∈ C_D(z)`.
+3. **Factorization.** The accepting vertices number
+   `Σ_{u, z, a} (Σ_{k < L} [f_{v_k} ∘ π_k ≡ 1 on C_D(z)])^t`, and
+   `[f_v ∘ π ≡ 1 on C_D(z)] ≤ E_{y ∈ C_D(z)} f_v(π y)`. With the averaged long code
+   `g_u(w) = E_k f_{v_k}(π_k w)` (`BHSV25.BK.avgTable`, of mean `1/2` by folding),
+   `Pr_r[accept] ≤ E_u E_{z,a} [(E_{y ∈ C_D(z)} g_u(y))^t]`.
+4. **It Ain't Over Till It's Over** (`BHSV25.BK.ItAintOver`): if `2 g_u - 1` has no coordinate of
+   degree-`K` influence at least `τ`, the inner expectation is at most `γ/8`.
+5. **Decoding** (`BHSV25.BK.few_bad`): if more than `γ m / 8` left vertices have an influential
+   coordinate, convexity of influences and `π` moving them give a labeling satisfying
+   `γ τ² / (32 (K + 1))` of the constraints; so on instances of small value at most `γ m / 8` are
+   bad.
+6. Hence `3γ/4 ≤ |S'|/N ≤ Pr_r[accept] ≤ γ/8 + γ/8`, a contradiction.
 -/
 
 @[expose] public section
@@ -172,9 +188,8 @@ theorem sum_ind_zero_le {m L : ℕ} (hR : 0 < P.R) (hM : 0 < P.M) :
   have h0 : (0 : ℝ) ≤ 2 ^ P.R * (L : ℝ) ^ P.t * m := by positivity
   nlinarith
 
-/-- **Soundness** [BHSV25/BK/README.md, Section 3]: on a left-regular instance with agreeing
-parallel constraints and
-constraints, if the subcube moments of the averaged long codes without influential coordinates
+/-- **Soundness**: on a left-regular instance with agreeing parallel constraints and at least one
+constraint, if the subcube moments of the averaged long codes without influential coordinates
 are at most `γ / 8` (It Ain't Over Till It's Over) and at most `γ m / 8` left vertices have an
 influential coordinate (decoding, on instances of small value), then one copy of the graph has
 no independent set of `γ N` vertices. -/

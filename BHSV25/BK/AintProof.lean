@@ -15,7 +15,7 @@ The probability form of Mossel, O'Donnell and Oleszkiewicz's "It Ain't Over Till
 and all degree-`K` influences of `2g - 1` below `τ` has average at least `1 - δ` on a random
 subcube (free coordinates `{j : aⱼ = 0}`, `a` uniform in `[M]^R`) with probability at most `ζ`.
 
-Proof (`BHSV25/BK/README.md`, Section 7), with `r = √(1 - 1/M)` and `k = 2M`:
+Proof (step 5 of the route in `BHSV25/BansalKhot.lean`), with `r = √(1 - 1/M)` and `k = 2M`:
 
 * the subcube average is `F(z, a) = mlEval (smoothC r ĝ) U(z, a)` for the three-valued ensemble
   `U` (`BHSV25.BK.Aint.subcube_eq`), and `E_x ψ(T_r g(x))` is the same polynomial under uniform

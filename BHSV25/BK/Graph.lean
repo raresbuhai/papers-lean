@@ -5,8 +5,8 @@ public import BHSV25.BK.AintOver
 /-!
 # The reduction from Unique Games to almost-bipartite independent set
 
-The graph of Bansal and Khot's reduction (`BHSV25/BK/README.md`, Section 1), its disjoint copies,
-and the gap problem it reduces to.
+The graph of Bansal and Khot's reduction (step 2 of the route in `BHSV25/BansalKhot.lean`), its
+disjoint copies, and the gap problem it reduces to.
 
 * **Vertices** of one copy (`BHSV25.BK.Prm.nV`): `r = (u, k, z, a)` with a left vertex `u < m`,
   indices `k : [t] → [L]` of `t` constraints at `u` (`L` the left degree), a point `z ∈ {0,1}^R`

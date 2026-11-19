@@ -7,10 +7,11 @@ import Mathlib.Data.List.GetD
 /-!
 # Completeness of the reduction
 
-From a labeling `(σ, τ)` satisfying a `1 - δ` fraction of the constraints of a left-regular
-instance (`BHSV25/BK/README.md`, Section 2): a vertex `(u, k, z, a)` is *accepted* when its `t`
-constraints are satisfied and `σ(u)` is not free; the accepted vertices with `z_{σ(u)} = b` form
-an independent set `I_b`, since two demands at a right vertex `v` agree at the coordinate `τ(v)`
+Step 3 of the route in `BHSV25/BansalKhot.lean`. From a labeling `(σ, τ)` satisfying a `1 - δ`
+fraction of the constraints of a left-regular instance: a vertex `(u, k, z, a)` is *accepted* when
+its `t` constraints are satisfied and `σ(u)` is not free; the accepted vertices with
+`z_{σ(u)} = b` form an independent set `I_b`, since two demands at a right vertex `v` agree at the
+coordinate `τ(v)`
 (`BHSV25.BK.Prm.no_clash`). Flipping `z_{σ(u)}` exchanges `I_0` and `I_1`, and at most a
 `t δ + 1/M` fraction of the vertices is not accepted, so each has at least
 `(1 - t δ - 1/M) N / 2` vertices (`BHSV25.BK.Prm.complete`).
@@ -276,8 +277,8 @@ theorem acc_count (hv : UGValid (m, n, P.R, cs)) {L : ℕ}
 
 end Complete
 
-/-- **Completeness** [BHSV25/BK/README.md, Section 2]: on a left-regular instance with
-constraints whose value is at least `1 - δ`, one copy of the graph has two disjoint independent
+/-- **Completeness**: on a left-regular instance with agreeing parallel constraints, at least one
+constraint, and value at least `1 - δ`, one copy of the graph has two disjoint independent
 sets of at least `(1 - t δ - 1/M) N / 2` vertices each. -/
 theorem complete {G : UGInstance} (hG : Good P.R G) (hL : ldeg G.2.2.2 ≠ 0) (hM : 0 < P.M)
     {δ : ℝ} (hδ : δ < 1) (hval : 1 - δ ≤ ugValue G) :

@@ -1,9 +1,14 @@
 # ABBKS26: Dimension reduction via sum-of-squares and improved clustering algorithms for non-spherical mixtures
 
+Anderson, Bafna, Buhai, Kothari, Steurer. *Dimension reduction via sum-of-squares and improved
+clustering algorithms for non-spherical mixtures*. COLT 2026.
+[arXiv:2411.12438](https://arxiv.org/abs/2411.12438). Numbers refer to the arXiv version (v2).
+
 The results are finite-precision variants of [ABBKS26, Theorems 1.1 and 1.2], in their full
 versions (Theorems 5.2 and 6.2), stated in [Challenge.lean](Challenge.lean) with the definitions
 of [Model.lean](Model.lean) and proved in [Solution.lean](Solution.lean), with only the standard
-axioms; `lake comparator` checks them. A mixture of `k` Gaussians whose components are pairwise
+axioms; `lake comparator` checks them (see [Checking a paper](../README.md#checking-a-paper)). A
+mixture of `k` Gaussians whose components are pairwise
 `Δ`-separated, either all centered (Theorem 1.1) or all with one common covariance (Theorem 1.2),
 is observed through an `ε`-corruption. The theorems cluster the sample with error
 `O(k/wmin · max(ε, Δ^(-1/(Ck))))` in each component, in time `g(1/wmin, Δ) · poly(|x|)` for
@@ -15,13 +20,11 @@ every such approximation. They are given a failure probability `δ > 0` and succ
 The formal proof follows the paper's argument in outline, though some of its steps take a different
 route (see [below](#how-the-proof-is-implemented)).
 
-Numbers refer to the arXiv version (v2).
-
 ## The statements
 
 | Result | Lean name | Content |
 | --- | --- | --- |
-| Theorem 1.1 (Thm. 5.2) | `centered_clustering` | There are `C ≥ 1`, a computable `g` and `f ≥ 1`, and an algorithm running in time `g(⌈1/wmin⌉, ⌈Δ⌉) · (\|x\| + 2)^C` such that, for a mixture of centered Gaussians whose components are pairwise `Δ`-separated (spectrally or in relative Frobenius norm) with `Δ ≥ f(1/wmin)`, an `ε`-corruption with `ε ≤ 1/f(1/wmin)`, and `n ≥ ((d + 1)(Δ + 1)/(wmin δ))^C` rounded samples, it returns with probability `1 - δ` a clustering that recovers each component up to a `C k/wmin · max(ε, Δ^(-1/(Ck)))` fraction of its points. |
+| Theorem 1.1 (Thm. 5.2) | `centered_clustering` | An algorithm running in time `g(⌈1/wmin⌉, ⌈Δ⌉) · (\|x\| + 2)^C` that, for a mixture of centered Gaussians whose components are pairwise `Δ`-separated with `Δ ≥ f(1/wmin)`, an `ε`-corruption with `ε ≤ 1/f(1/wmin)`, and `n ≥ ((d + 1)(Δ + 1)/(wmin δ))^C` rounded samples, returns with probability `1 - δ` a clustering that recovers each component up to a `C k/wmin · max(ε, Δ^(-1/(Ck)))` fraction of its points. |
 | Theorem 1.2 (Thm. 6.2) | `identical_covariance_clustering` | The same for a mixture of Gaussians with one common covariance whose means are pairwise `Δ`-separated along some direction, from `n ≥ ((d + 1)/wmin)^(C (log (1/wmin) + 1)) ((Δ + 1)/δ)^C` rounded samples, in time `g(⌈1/wmin⌉, ⌈Δ⌉) · (\|x\| + 2)^C · (d + 2)^(C (L² + 1))` with `L ≈ log₂ (1/wmin)`. |
 
 * **The model** ([Model.lean](Model.lean)): `k` Gaussians `N(μᵢ, Σᵢ)` in `ℝ^d` with positive
@@ -41,7 +44,8 @@ Numbers refer to the arXiv version (v2).
   not be measurable. The paper's analysis is for the exact points.
 * **The input** is `k`, `wmin`, `Δ`, `δ` (rationals) and the rounded sample; not `ε`, the
   weights, the means, the covariances, the labels, the corruption or the rounding. One natural
-  number `C` stands for all the `O(·)`s, the functions `f` and `g` for the paper's.
+  number `C ≥ 1` stands for all the `O(·)`s, and functions `f ≥ 1` and `g`, with `g` computable,
+  for the paper's.
 * **Algorithms** are multitape Turing machines with coins, running within the explicit time
   bounds `ABBKS26.centeredTime` and `ABBKS26.identicalCovTime` in the length `|x|` of the encoded
   input. The factor `(|x| + 2)^C` pays for reading the sample. The probability
@@ -207,18 +211,18 @@ astronomically large.
 
 | Files | Content |
 | --- | --- |
-| [Challenge.lean](Challenge.lean), [Model.lean](Model.lean) | the statements and their definitions |
-| [Solution.lean](Solution.lean) | the statements, proved from [Assembly/Main.lean](Assembly/Main.lean) |
-| [Common/](Common/) | vectors, matrices, polynomials, the frame of a mixture, Gram factors |
-| [SoS/](SoS/) | normed sum-of-squares inequalities |
-| [Rounding/](Rounding/) | Section 4: Algorithm 1, the orthogonal-complement system, Theorems 4.1 and 4.2 |
-| [Centered/](Centered/) | Section 5.1: the centered system and Theorem 5.6 |
-| [IdCov/](IdCov/) | Section 6.1: the moment system for a common covariance and Theorem 6.5 |
-| [Robust/](Robust/) | the quadratic filter and certified moments |
-| [Prob/](Prob/), [Split/](Split/) | the good event and its probability; window counts of Gaussians |
-| [Linalg/](Linalg/) | separation of covariances under congruence |
-| [Tree/](Tree/) | the good event on nodes, splits, refinement and the tree |
-| [Select/](Select/) | learning, selection, pairwise tests and reclustering |
-| [Assembly/](Assembly/) | the schedule, the list programs, the running time and the main theorems |
+| [Model.lean](Model.lean), [Challenge.lean](Challenge.lean) | Mixtures, separation, corruptions, rounded samples, randomized algorithms, recovery, and the statements. |
+| [Common/](Common/) | Vectors, matrices, polynomials, the frame of a mixture, Gram factors. |
+| [Prob/](Prob/), [Split/](Split/) | The good event and its probability; window counts of Gaussians. |
+| [SoS/](SoS/) | Normed sum-of-squares inequalities. |
+| [Rounding/](Rounding/) | Section 4: Algorithm 1, the orthogonal-complement system, Theorems 4.1 and 4.2. |
+| [Centered/](Centered/) | Section 5.1: the centered system and Theorem 5.6. |
+| [Linalg/](Linalg/) | Separation of covariances under congruence. |
+| [IdCov/](IdCov/) | Section 6.1: the moment system for a common covariance and Theorem 6.5. |
+| [Robust/](Robust/) | The quadratic filter and certified moments. |
+| [Tree/](Tree/) | The good event on nodes, splits, refinement and the tree. |
+| [Select/](Select/) | Learning, selection, pairwise tests and reclustering. |
+| [Assembly/](Assembly/) | The schedule, the list programs, the running time and the main theorems. |
+| [Solution.lean](Solution.lean) | The two theorems from [Assembly/Main.lean](Assembly/Main.lean), checked by `lake comparator` ([comparator.json](comparator.json)). |
 
 *Formalized by [Claude Code](https://claude.com/claude-code) and [Codex](https://openai.com/codex/).*

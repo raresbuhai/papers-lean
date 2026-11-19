@@ -6,12 +6,12 @@ public import BHSV25.BK.Machine
 /-!
 # Bansal and Khot's theorem from the Unique Games Conjecture
 
-The assembly (`BHSV25/BK/README.md`, Section 5): given `ε, γ ≤ 1/8` and `η > 0`, the parameters
-`M = ⌈2/ε⌉ + ⌈4/γ⌉ + 2`, `(K, τ, t)` from It Ain't Over Till It's Over (`BHSV25.BK.ItAintOver`)
-for `γ / 8`, `ε₁` from the decoding (`BHSV25.BK.few_bad`), `δ = min(ε₀, ε₁, ε / (2(t+1)))` and `R`
-from the hardness of left-regular Unique Games (`BHSV25.BK.LRHard`) for `δ`. The reduction
-`BHSV25.BK.Prm.reduce` with `k₀ = ⌈1/η⌉ + 1` copies maps the yes-instances of `lrGap R δ` to
-yes-instances of `bkGap' ε γ η`
+The assembly (step 6 of the route in `BHSV25/BansalKhot.lean`): given `ε, γ ≤ 1/8` and
+`η > 0`, the parameters `M = ⌈2/ε⌉ + ⌈4/γ⌉ + 2`, `(K, τ, t)` from It Ain't Over Till It's Over
+(`BHSV25.BK.ItAintOver`) for `γ / 8`, `ε₁` from the decoding (`BHSV25.BK.few_bad`),
+`δ = min(ε₀, ε₁, ε / (2(t+1)))` and `R` from the hardness of left-regular Unique Games
+(`BHSV25.BK.LRHard`) for `δ`. The reduction `BHSV25.BK.Prm.reduce` with `k₀ = ⌈1/η⌉ + 1` copies
+maps the yes-instances of `lrGap R δ` to yes-instances of `bkGap' ε γ η`
 (`BHSV25.BK.Prm.complete`) and the no-instances to no-instances (`BHSV25.BK.Prm.sound`); with
 `R = 0` there are no yes-instances and a constant map does. `NPHard.trans` concludes
 (`BHSV25.BK.bansalKhot_of`).

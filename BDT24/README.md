@@ -1,39 +1,33 @@
 # BDT24: Computational-statistical gaps for improper learning in sparse linear regression
 
-The results are the reduction of [BDT24], Theorem 3.1, and the low-degree and statistical-query
-lower bounds for negative sparse PCA, Theorems B.4 and C.6. They are stated in
-[Challenge.lean](Challenge.lean) with the definitions of [Model.lean](Model.lean) and proved in
-[Solution.lean](Solution.lean), with only the standard axioms; `lake comparator` checks them.
+Buhai, Ding, Tiegel. *Computational-statistical gaps for improper learning in sparse linear
+regression*. COLT 2024. [arXiv:2402.14103](https://arxiv.org/abs/2402.14103). Numbers refer to the
+arXiv version (v2).
 
-* **Theorem 3.1.** A polynomial-time algorithm that achieves prediction error `0.01` for sparse
-  linear regression with Gaussian design and noise variance `1`, with probability `1 - δ`, gives
-  an algorithm that solves negative sparse PCA with `θ = (k+1)/(k+2)` from the same number of
-  samples, with probability `1 - √(2δ) - exp(-Ω(n))`. Both algorithms are Turing machines that
-  read their samples to a given number of bits. The PCA algorithm reads polynomially many more
-  bits than it gives the regression algorithm, and runs in time `O(1 + δ^(-1/2))` times a
-  polynomial in its input. The regression algorithm is only asked to succeed on instances with
-  `I/(k+2) ⪯ Σ ⪯ I` and `‖x*‖² ≤ k`, which contain those of the reduction.
-* **Theorem B.4.** For `δ ≤ 0.1` and `n = o(min(d, k^(2-δ)))`, polynomials of degree `k^δ` in
-  the coordinates of `n` points have advantage `o(1)` in telling planted points of negative sparse
-  PCA from null ones, for every `θ ∈ (0, 1)`. The paper bounds the normalized ratio by
-  `1 + o(1)`; its proof gives `o(1)`.
-* **Theorem C.6.** For `δ ≤ 0.1` and `n = o(min(d/k^δ, k^(2-2δ)))`, the statistical dimension of
-  negative sparse PCA at VSTAT parameter `n` is at least `2^(k^δ)`, uniformly in
-  `θ ≤ (k+1)/(k+2)`. This contains every fixed `θ < 1` and the `θ` of the reduction.
-  Statistical-query algorithms themselves are not formalized.
+The results are the reduction of [BDT24], Theorem 3.1, and the low-degree and statistical-query
+lower bounds for negative sparse PCA, Theorems B.4 and C.6. Theorem 3.1 turns a polynomial-time
+algorithm that achieves prediction error `0.01` for sparse linear regression with Gaussian design
+and noise variance `1`, with probability `1 - δ`, into an algorithm that solves negative sparse PCA
+with `θ = (k+1)/(k+2)` from the same number of samples, with probability
+`1 - √(2δ) - exp(-Ω(n))`; both are Turing machines that read their samples to a given number of
+bits. Theorem B.4 says that polynomials of degree `k^δ` have advantage `o(1)` against negative
+sparse PCA when `n = o(min(d, k^(2-δ)))`, for every `θ ∈ (0, 1)`, and Theorem C.6 that its
+statistical dimension is at least `2^(k^δ)` when `n = o(min(d/k^δ, k^(2-2δ)))`, uniformly in
+`θ ≤ (k+1)/(k+2)`; statistical-query algorithms themselves are not formalized. The results are
+stated in [Challenge.lean](Challenge.lean) with the definitions of [Model.lean](Model.lean) and
+proved in [Solution.lean](Solution.lean), with only the standard axioms; `lake comparator` checks
+them (see [Checking a paper](../README.md#checking-a-paper)).
 
 The formal proof follows the paper's argument in outline, though some of its steps take a
 different route (see [below](#how-the-proof-is-implemented)).
-
-Numbers refer to the arXiv version (v2).
 
 ## The statements
 
 | Result | Lean name | Content |
 | --- | --- | --- |
-| Theorem 3.1 | `negSPCA_of_sparse_regression` | There are constants `c > 0` and `C` such that for every regression algorithm `A` running in time `(|x| + 2)^e` there are a PCA algorithm `B` running in time `(⌊√⌈1/δ⌉⌋ + 1)(|x| + 2)^(e')` and an exponent `E` such that, for every rational `δ > 0` and all `n`, `k ≤ d` and `p`: if `A` achieves prediction error `0.01` with probability `1 - δ` on `n` samples in dimension `2d` with sparsity `k`, read to `p` bits, on every bounded instance, then `B`, given `δ` and `p`, tells `n` points of `N(0, I_{d+1})` from `n` points of `N(0, I - θ x xᵀ)` (for a random spike `x`), read to any `q ≥ (n + d + p + 2)^E` bits, with probability `1 - √(2δ) - C exp(-c n)` on each side. |
-| Theorem B.4 | `lowDegree_negSPCA` | For every `δ ∈ (0, 1/10]` and `ε > 0` there are `η > 0` and `k₀` such that for every `θ ∈ (0, 1)` and all `n` and `k₀ ≤ k ≤ d` with `n ≤ η min(d, k^(2-δ))`, every polynomial `f` of total degree at most `k^δ` in the `n(d+1)` coordinates of `n` points has `E_P f - E_Q f ≤ ε √(Var_Q f)`, for the planted law `P` (one random spike shared by the `n` points) and the null law `Q`. |
-| Theorem C.6 | `sq_negSPCA` | For every `δ ∈ (0, 1/10]` there are `η > 0` and `k₀` such that for all `n ≥ 1` and `k₀ ≤ k ≤ d` with `n ≤ η min(d/k^δ, k^(2-2δ))` and every `θ ∈ (0, (k+1)/(k+2)]`, the statistical dimension at VSTAT parameter `n` is at least `q = ⌈2^(k^δ)⌉`: on every set of pairs `(u, v)` of sign patterns of probability at least `1/q²`, the average of `|⟨D̄_u, D̄_v⟩ - 1|` is at most `1/n`. |
+| Theorem 3.1 | `negSPCA_of_sparse_regression` | For every regression algorithm `A` running in time `(\|x\| + 2)^e` there are a PCA algorithm `B` running in time `(⌊√⌈1/δ⌉⌋ + 1)(\|x\| + 2)^(e')` and an exponent `E` such that, if `A` achieves prediction error `0.01` with probability `1 - δ` on `n` samples of the bounded instances in dimension `2d` with sparsity `k`, read to `p` bits, then `B` tells `n` points of `N(0, I_{d+1})` from `n` points of `N(0, I - θ x xᵀ)`, read to `q ≥ (n + d + p + 2)^E` bits, with probability `1 - √(2δ) - exp(-Ω(n))` on each side. |
+| Theorem B.4 | `lowDegree_negSPCA` | For every `δ ∈ (0, 1/10]` and `ε > 0` there are `η > 0` and `k₀` such that for every `θ ∈ (0, 1)` and `k₀ ≤ k ≤ d` with `n ≤ η min(d, k^(2-δ))`, every polynomial `f` of degree at most `k^δ` in the coordinates of `n` points has `E_P f - E_Q f ≤ ε √(Var_Q f)`, for the planted law `P` (one random spike shared by the `n` points) and the null law `Q`. |
+| Theorem C.6 | `sq_negSPCA` | For every `δ ∈ (0, 1/10]` there are `η > 0` and `k₀` such that for all `n ≥ 1` and `k₀ ≤ k ≤ d` with `n ≤ η min(d/k^δ, k^(2-2δ))` and every `θ ∈ (0, (k+1)/(k+2)]`, the statistical dimension at VSTAT parameter `n` is at least `⌈2^(k^δ)⌉`. |
 
 For Theorem 3.1:
 
@@ -57,21 +51,24 @@ For Theorem 3.1:
   some range of parameters, as in Theorem 1.5, and to `δ` that depend on `n`, `d` and `k`.
 * **Running times** are in the length `|x|` of the encoded input. The factor
   `⌊√⌈1/δ⌉⌋ + 1` is the `O(1/√δ)` repetitions of Lemma 4.1; for this, the PCA algorithm is given
-  `δ`. It is polynomial in `|x|` when `1/δ` is polynomially bounded.
+  `δ`, a positive rational. It is polynomial in `|x|` when `1/δ` is polynomially bounded.
 
 For Theorems B.4 and C.6:
 
-* **The advantage** (`AdvantageAtMost`, as in BHJK25) is `E_P f - E_Q f ≤ ε √(Var_Q f)` for every
-  polynomial `f` of degree at most `k^δ`; for `E_Q f = 0` it bounds the paper's ratio
-  `E_P f / √(E_Q f²)` by `ε`.
+* **The advantage** (`AdvantageAtMost`, as in [BHJK25](../BHJK25)) is
+  `E_P f - E_Q f ≤ ε √(Var_Q f)` for every polynomial `f` of total degree at most `k^δ` in the
+  `n(d+1)` coordinates; for `E_Q f = 0` it bounds the paper's ratio `E_P f / √(E_Q f²)` by `ε`.
+  The paper bounds the normalized ratio by `1 + o(1)`; its proof gives `o(1)`.
 * **`o(·)`** is written with quantifiers: the bounds hold once `n / min(d, k^(2-δ))` (or
   `n / min(d/k^δ, k^(2-2δ))`) is at most `η` and `k ≥ k₀`.
 * **The statistical dimension** (Definition C.2, `SDAAtLeast`) is written with the relative
   densities `D̄_v = dP_v/dQ` of one planted point (Mathlib's Radon–Nikodym derivative) and their
   correlations `⟨D̄_u, D̄_v⟩ = E_Q [D̄_u D̄_v]`. The prior is uniform on sign patterns, so an event
-  is a set of pairs and a conditional expectation an average. `n` is the parameter of the VSTAT
-  oracle; the oracle and the theorem that statistical-query algorithms need about `SDA(S, n)`
-  queries (Theorem C.3) are not formalized.
+  is a set of pairs and a conditional expectation an average. The statistical dimension at
+  parameter `n` is at least `q` when, on every set of pairs `(u, v)` of sign patterns of
+  probability at least `1/q²`, the average of `|⟨D̄_u, D̄_v⟩ - 1|` is at most `1/n`. `n` is the
+  parameter of the VSTAT oracle; the oracle and the theorem that statistical-query algorithms need
+  about `SDA(S, n)` queries (Theorem C.3) are not formalized.
 * **`θ` in Theorem C.6** ranges over `(0, (k+1)/(k+2)]` with one `η` and one `k₀`. The paper does
   not say whether `θ` may vary with `n`, `d` and `k`. This range contains every fixed `θ < 1` once
   `k` is large, where it is the paper's statement, and the `θ` of the reduction, which varies with
@@ -215,29 +212,29 @@ low-degree norm and the high-degree part:
 
 | Files | Content |
 | --- | --- |
-| [Model.lean](Model.lean), [Challenge.lean](Challenge.lean) | the models, quantized inputs, machines, and the statement |
-| [Alg/Defs.lean](Alg/Defs.lean) | the algorithm: paired test, own samples, rounds, the fold over the coins |
-| [Alg/Numerics.lean](Alg/Numerics.lean) | `π`, `Φ` and Gaussians from cells, with error bounds (from BGHKLMM26) |
-| [Alg/PolyTime.lean](Alg/PolyTime.lean), [Alg/PolyTime/](Alg/PolyTime) | the pieces in polynomial time |
-| [Alg/RunTime.lean](Alg/RunTime.lean) | the running time of the fold |
-| [Alg/Coins.lean](Alg/Coins.lean), [Alg/Coins/](Alg/Coins) | rounds as independent blocks of coins; own samples from Gaussians |
-| [Prob/Gauss.lean](Prob/Gauss.lean), [Prob/Gauss/](Prob/Gauss) | Fact 2.1, the bounded instances, the laws of the statistics |
-| [Prob/Tail.lean](Prob/Tail.lean), [Prob/Tail/](Prob/Tail) | squared-norm concentration, tails, anti-concentration near a grid |
-| [Prob/Exch.lean](Prob/Exch.lean) | the exchangeability argument of Lemma 4.1 |
-| [Analysis/Exact.lean](Analysis/Exact.lean) | what the algorithm computes on quantized samples |
-| [Analysis/Test.lean](Analysis/Test.lean) | the paired test is right on good samples |
-| [Analysis/Good.lean](Analysis/Good.lean) | the good events and their probabilities |
-| [Analysis/Planted.lean](Analysis/Planted.lean), [Analysis/Null.lean](Analysis/Null.lean) | the planted and the null case |
-| [Main.lean](Main.lean) | the error bound of Theorem 3.1 |
-| [LowDeg/Defs.lean](LowDeg/Defs.lean) | multivariate Hermite polynomials, the planted Hermite coefficients, the overlap moments |
-| [LowDeg/Hermite.lean](LowDeg/Hermite.lean) | the Hermite basis and the advantage bound |
-| [LowDeg/Spike.lean](LowDeg/Spike.lean), [LowDeg/Spike/](LowDeg/Spike) | the laws of the samples and the Hermite coefficients of a planted point |
-| [LowDeg/Norm.lean](LowDeg/Norm.lean) | the low-degree norm through the overlap moments |
-| [LowDeg/Overlap.lean](LowDeg/Overlap.lean) | Lemma B.5 |
-| [LowDeg/Main.lean](LowDeg/Main.lean) | Theorem B.4 |
-| [SQ/Density.lean](SQ/Density.lean), [SQ/Corr.lean](SQ/Corr.lean) | the density of a planted point and the correlations |
-| [SQ/Holder.lean](SQ/Holder.lean) | the statistical dimension from the moments of the correlations |
-| [SQ/Main.lean](SQ/Main.lean), [SQ/Main/](SQ/Main) | Theorem C.6 |
-| [Solution.lean](Solution.lean) | the three theorems |
+| [Model.lean](Model.lean), [Challenge.lean](Challenge.lean) | The models, quantized inputs, machines, and the statements. |
+| [Alg/Defs.lean](Alg/Defs.lean) | The algorithm: paired test, own samples, rounds, the fold over the coins. |
+| [Alg/Numerics.lean](Alg/Numerics.lean) | `π`, `Φ` and Gaussians from cells, with error bounds (from [BGHKLMM26](../BGHKLMM26)). |
+| [Alg/PolyTime.lean](Alg/PolyTime.lean), [Alg/PolyTime/](Alg/PolyTime) | The pieces in polynomial time. |
+| [Alg/RunTime.lean](Alg/RunTime.lean) | The running time of the fold. |
+| [Alg/Coins.lean](Alg/Coins.lean), [Alg/Coins/](Alg/Coins) | Rounds as independent blocks of coins; own samples from Gaussians. |
+| [Prob/Gauss.lean](Prob/Gauss.lean), [Prob/Gauss/](Prob/Gauss) | Fact 2.1, the bounded instances, the laws of the statistics. |
+| [Prob/Tail.lean](Prob/Tail.lean), [Prob/Tail/](Prob/Tail) | Squared-norm concentration, tails, anti-concentration near a grid. |
+| [Prob/Exch.lean](Prob/Exch.lean) | The exchangeability argument of Lemma 4.1. |
+| [Analysis/Exact.lean](Analysis/Exact.lean) | What the algorithm computes on quantized samples. |
+| [Analysis/Test.lean](Analysis/Test.lean) | The paired test is right on good samples. |
+| [Analysis/Good.lean](Analysis/Good.lean) | The good events and their probabilities. |
+| [Analysis/Planted.lean](Analysis/Planted.lean), [Analysis/Null.lean](Analysis/Null.lean) | The planted and the null case. |
+| [Main.lean](Main.lean) | The error bound of Theorem 3.1. |
+| [LowDeg/Defs.lean](LowDeg/Defs.lean) | Multivariate Hermite polynomials, the planted Hermite coefficients, the overlap moments. |
+| [LowDeg/Hermite.lean](LowDeg/Hermite.lean) | The Hermite basis and the advantage bound. |
+| [LowDeg/Spike.lean](LowDeg/Spike.lean), [LowDeg/Spike/](LowDeg/Spike) | The laws of the samples and the Hermite coefficients of a planted point. |
+| [LowDeg/Norm.lean](LowDeg/Norm.lean) | The low-degree norm through the overlap moments. |
+| [LowDeg/Overlap.lean](LowDeg/Overlap.lean) | Lemma B.5. |
+| [LowDeg/Main.lean](LowDeg/Main.lean) | Theorem B.4. |
+| [SQ/Density.lean](SQ/Density.lean), [SQ/Corr.lean](SQ/Corr.lean) | The density of a planted point and the correlations. |
+| [SQ/Holder.lean](SQ/Holder.lean) | The statistical dimension from the moments of the correlations. |
+| [SQ/Main.lean](SQ/Main.lean), [SQ/Main/](SQ/Main) | Theorem C.6. |
+| [Solution.lean](Solution.lean) | The three theorems, checked by `lake comparator` ([comparator.json](comparator.json)). |
 
 *Formalized by [Claude Code](https://claude.com/claude-code).*

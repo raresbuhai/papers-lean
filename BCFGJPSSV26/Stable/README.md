@@ -1,4 +1,4 @@
-# Stable instances
+# Theorem 1.3: stable instances
 
 [BCFGJPSSV26b, Theorem 1.1], which is [BCFGJPSSV26a, Theorem 1.3], is
 `BCFGJPSSV26.Stable.stable_main : BCFGJPSSV26.Combine.Thm13` ([Main.lean](Main.lean); the
@@ -41,7 +41,9 @@ clusters is `s = 632 N L`.
    [BCFGJPSSV26b, Lemma 6.2]) give the refined local-search bound
    ([BCFGJPSSV26b, Theorem 3.6], `BCFGJPSSV26.Stable.refined_ls`) and the bound
    `(3 + 100/N) opt ≤ 4 opt` ([BCFGJPSSV26b, Corollary 1.5],
-   `BCFGJPSSV26.Stable.costF_le_three_add`).
+   `BCFGJPSSV26.Stable.costF_le_three_add`). With a fixed `N = 201` and a polynomial budget, the
+   local search also serves Part I for large `ε` (`BCFGJPSSV26.Stable.costF_localSearch_le`,
+   `BCFGJPSSV26.Stable.localSearch_polytime'`).
 3. **Stability** (`BCFGJPSSV26.Stable.Hyp.card_unsynced_lt`). Fewer than `632/(εβ)` optimal
    clusters are unsynced ([BCFGJPSSV26b, Lemma 4.2] with this bound; of the local search, the
    proof uses only `cost(S) ≤ 4 opt`), so `s = 632 N L ≥ 632/(εβ)` bounds the special clusters.
@@ -109,6 +111,3 @@ clusters is `s = 632 N L`.
 | [Alg/Submod.lean](Alg/Submod.lean), [Alg/Coloring.lean](Alg/Coloring.lean) | The submodular step in exact arithmetic and its specification; color coding. |
 | [WinWin.lean](WinWin.lean), [Final/Combine.lean](Final/Combine.lean) | The rows of Lemma 3.9; the win-win combination and the degenerate cases `k = 1`, `opt = 0`. |
 | [Time/Budget.lean](Time/Budget.lean), [Time/PolyTimeRaw.lean](Time/PolyTimeRaw.lean), [Time/PolyTimeCoins.lean](Time/PolyTimeCoins.lean), [Time/PolyTimeKS.lean](Time/PolyTimeKS.lean), [Time/PolyTimeSubmod.lean](Time/PolyTimeSubmod.lean), [Time/PolyTimeLS.lean](Time/PolyTimeLS.lean), [Time/PolyTimeTrial.lean](Time/PolyTimeTrial.lean), [Time/PolyTimeCore.lean](Time/PolyTimeCore.lean), [Time/Accuracy.lean](Time/Accuracy.lean), [Time/RunTime.lean](Time/RunTime.lean) | The budget and the number of trials; polynomial-time certificates for the exact computations, the samplings, the submodular step, the local search, a trial and the core, with one degree for every `N`; `N` from `ε`; the running time. |
-
-The local search, with a fixed `N = 201` and a polynomial budget, also serves Part I for large
-`ε` (`BCFGJPSSV26.Stable.costF_localSearch_le`, `BCFGJPSSV26.Stable.localSearch_polytime'`).

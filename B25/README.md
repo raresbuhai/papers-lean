@@ -1,5 +1,8 @@
 # B25: Lasso and partially-rotated designs
 
+Buhai. *Lasso and partially-rotated designs*. [arXiv:2505.11093](https://arxiv.org/abs/2505.11093).
+Numbers refer to the arXiv version (v1).
+
 The results are the main result of [B25], Theorem 1.5, its consequence for the Lasso,
 Corollary 1.6, and two families of designs it applies to, Lemmas 1.3 and 1.4. A design is
 partially rotated with respect to a set `S` of columns when, with high probability, every fixed
@@ -8,15 +11,13 @@ Theorem 1.5 says that the restricted eigenvalue constants of such a design with 
 of `S` are then, with high probability, at least `0.9` times those of the columns in `S` alone,
 however the other columns are correlated. The results are stated in
 [Challenge.lean](Challenge.lean) with the definitions of [Model.lean](Model.lean) and proved in
-[Solution.lean](Solution.lean), with only the standard axioms; `lake comparator` checks them. None
-of them is about algorithms: Corollary 1.6 bounds the error of the Lasso estimate itself. Lemmas
-1.3 and 1.4 are stated for `n` large enough, since a bound `e^(-cn)` without a constant factor
-cannot hold for small `n`.
+[Solution.lean](Solution.lean), with only the standard axioms; `lake comparator` checks them (see
+[Checking a paper](../README.md#checking-a-paper)). None of them is about algorithms: Corollary 1.6
+bounds the error of the Lasso estimate itself. Lemmas 1.3 and 1.4 are stated for `n` large enough,
+since a bound `e^(-cn)` without a constant factor cannot hold for small `n`.
 
 The formal proof follows the paper's argument in outline, though some of its steps take a
 different route (see [below](#how-the-proof-is-implemented)).
-
-Numbers refer to the arXiv version (v1).
 
 ## The statements
 
@@ -52,6 +53,22 @@ The module doc of [Challenge.lean](Challenge.lean) explains each choice.
 
 ## How the proof is implemented
 
+### Lemmas 1.3 and 1.4
+
+Both proofs reduce, as in the paper, to the correlation `⟨u, Rw⟩ / ‖Rw‖₂` for fixed unit vectors
+`u` and `w`.
+
+* **Lemma 1.3** ([Rot/Sphere.lean](Rot/Sphere.lean)). `Rw` is a uniform point of the sphere, and
+  the cap `{y : |⟨u, y⟩| > ε}` is bounded through the definition of the surface measure: its cone
+  in the unit ball lies in three balls of radius at most `1 - ε²/8`, so the cap has measure at most
+  `2^(-n) + 2 (1 - ε²/8)ⁿ`. The paper bounds it through Gaussian tails instead. The constants are
+  `c = 1/160000` and `n₀ = 320000`.
+* **Lemma 1.4** ([Rot/SubGauss.lean](Rot/SubGauss.lean)). `⟨u, Rw⟩` is sub-Gaussian with proxy
+  `σ'²`. The coordinates of `Rw` are independent with second moment `σ²` and fourth moment at most
+  `36 σ'⁴`, and `‖Rw‖₂² ≥ σ² n / 4` with probability `1 - e^(-nσ⁴/(144 σ'⁴))` by a Chernoff bound
+  on `e^(-λ ‖Rw‖₂²)`, in place of the paper's Hanson–Wright inequality. The constants are
+  `c = 1/960000` and `K = 1920000`.
+
 ### Theorem 1.5
 
 The proof has the paper's three steps: Maurey's sparsification [B25, Lemma 2.1], restricted
@@ -85,35 +102,19 @@ with the columns and a chi-square norm ([Lasso/Noise.lean](Lasso/Noise.lean)). T
 exponentially small failure probabilities fit into one `e^(-c'n)` because a large `C₂` makes the
 first impossible for small `n` ([Lasso/Main.lean](Lasso/Main.lean)).
 
-### Lemmas 1.3 and 1.4
-
-Both proofs reduce, as in the paper, to the correlation `⟨u, Rw⟩ / ‖Rw‖₂` for fixed unit vectors
-`u` and `w`.
-
-* **Lemma 1.3** ([Rot/Sphere.lean](Rot/Sphere.lean)). `Rw` is a uniform point of the sphere, and
-  the cap `{y : |⟨u, y⟩| > ε}` is bounded through the definition of the surface measure: its cone
-  in the unit ball lies in three balls of radius at most `1 - ε²/8`, so the cap has measure at most
-  `2^(-n) + 2 (1 - ε²/8)ⁿ`. The paper bounds it through Gaussian tails instead. The constants are
-  `c = 1/160000` and `n₀ = 320000`.
-* **Lemma 1.4** ([Rot/SubGauss.lean](Rot/SubGauss.lean)). `⟨u, Rw⟩` is sub-Gaussian with proxy
-  `σ'²`. The coordinates of `Rw` are independent with second moment `σ²` and fourth moment at most
-  `36 σ'⁴`, and `‖Rw‖₂² ≥ σ² n / 4` with probability `1 - e^(-nσ⁴/(144 σ'⁴))` by a Chernoff bound
-  on `e^(-λ ‖Rw‖₂²)`, in place of the paper's Hanson–Wright inequality. The constants are
-  `c = 1/960000` and `K = 1920000`.
-
 ## Map of the files
 
 | Files | Content |
 | --- | --- |
-| [Model.lean](Model.lean), [Challenge.lean](Challenge.lean) | the definitions and the statements |
-| [Basic.lean](Basic.lean) | norms and correlations, signed tuples of coordinates, the restricted eigenvalue constant as an infimum, rotated designs |
-| [RE/Maurey.lean](RE/Maurey.lean) | Maurey's sparsification |
-| [RE/RNO.lean](RE/RNO.lean) | RNO on signed tuples implies restricted eigenvalues |
-| [RE/Main.lean](RE/Main.lean) | Theorem 1.5 |
-| [Lasso/Basic.lean](Lasso/Basic.lean), [Lasso/Noise.lean](Lasso/Noise.lean) | the Lasso's existence, basic inequality and fast rate; the tails of the noise |
-| [Lasso/Main.lean](Lasso/Main.lean) | Corollary 1.6 |
-| [Rot/Sphere.lean](Rot/Sphere.lean) | Lemma 1.3 |
-| [Rot/SubGauss.lean](Rot/SubGauss.lean) | Lemma 1.4 |
-| [Solution.lean](Solution.lean) | the four results |
+| [Model.lean](Model.lean), [Challenge.lean](Challenge.lean) | Partially-rotated designs, restricted eigenvalue constants, the Lasso, and the statements. |
+| [Basic.lean](Basic.lean) | Norms and correlations, signed tuples of coordinates, the restricted eigenvalue constant as an infimum, rotated designs. |
+| [Rot/Sphere.lean](Rot/Sphere.lean) | Lemma 1.3. |
+| [Rot/SubGauss.lean](Rot/SubGauss.lean) | Lemma 1.4. |
+| [RE/Maurey.lean](RE/Maurey.lean) | Maurey's sparsification. |
+| [RE/RNO.lean](RE/RNO.lean) | RNO on signed tuples implies restricted eigenvalues. |
+| [RE/Main.lean](RE/Main.lean) | Theorem 1.5. |
+| [Lasso/Basic.lean](Lasso/Basic.lean), [Lasso/Noise.lean](Lasso/Noise.lean) | The Lasso's existence, basic inequality and fast rate; the tails of the noise. |
+| [Lasso/Main.lean](Lasso/Main.lean) | Corollary 1.6. |
+| [Solution.lean](Solution.lean) | The four results, checked by `lake comparator` ([comparator.json](comparator.json)). |
 
 *Formalized by [Claude Code](https://claude.com/claude-code).*

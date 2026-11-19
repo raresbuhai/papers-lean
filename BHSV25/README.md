@@ -1,40 +1,47 @@
 # BHSV25: Finding colorings in one-sided expanders
 
+Buhai, Hua, Steurer, Vári-Kakas. *Finding colorings in one-sided expanders*. FOCS 2025.
+[arXiv:2508.02825](https://arxiv.org/abs/2508.02825). Numbers refer to the arXiv version (v2).
+
 The results are [BHSV25]'s algorithms in the full versions of Section 7, with their explicit
 errors and running times (Theorems 7.1, 7.9, 7.17 and 7.20, Corollaries 7.2 and 7.21, and
 Theorem 7.12 with an additional error `ε`), Corollaries 1.2 and 1.4 with the running times these
-give, the hardness results (Theorems 1.5, 1.6, 1.8 (2) and 1.9 (2)) and Theorems 1.7 and 4.1, stated in
-[Challenge.lean](Challenge.lean) with the definitions of [Model.lean](Model.lean) and proved in
-[Solution.lean](Solution.lean), with only the standard axioms; `lake comparator` checks them. The
-hardness results assume the Unique Games Conjecture on graphs (`UniqueGames.KhotUGC`), and the proof
-derives from it the paper's starting point, Bansal and Khot's hardness of almost-bipartite
-independent set [BHSV25, Fact 8.1], including Khot and Regev's regularization of Unique Games
-instances and Mossel, O'Donnell and Oleszkiewicz's "It Ain't Over Till It's Over".
+give, the hardness results (Theorems 1.5, 1.6, 1.8 (2) and 1.9 (2)) and Theorems 1.7 and 4.1,
+stated in [Challenge.lean](Challenge.lean) with the definitions of [Model.lean](Model.lean) and
+proved in [Solution.lean](Solution.lean), with only the standard axioms; `lake comparator` checks
+them (see [Checking a paper](../README.md#checking-a-paper)). The hardness results assume the
+Unique Games Conjecture on graphs (`UniqueGames.KhotUGC`), and the proof derives from it the
+paper's starting point, Bansal and Khot's hardness of almost-bipartite independent set
+[BHSV25, Fact 8.1], including Khot and Regev's regularization of Unique Games instances and
+Mossel, O'Donnell and Oleszkiewicz's "It Ain't Over Till It's Over".
 
 The formal proof follows the paper's argument in outline, though some of its steps take a
 different route (see [below](#how-the-proof-is-implemented)).
-
-Numbers refer to the arXiv version (v2).
 
 ## The statements
 
 | Result | Lean name | Content |
 | --- | --- | --- |
-| Theorem 7.20 | `independentSet_bottomRank` | On regular graphs with an independent set of `(1/2 - γ) n` vertices: one of `(1/2 - γ - (4 + c) γ/(1 - λ)) n`, by one algorithm for all `t`, in time `poly(n) · (1 - λ)^{-O(1)} · (γ/(1 - λ))^{-O(t)}` on the graphs with at most `t` eigenvalues at most `-λ`. |
-| Theorem 1.1 (Cor. 7.21) | `independentSet_approximation` | The same for `λ < 1/2`: `(1/2 - γ - (4 + c) γ/(1 - √(2λ))) n`, in time `poly(n) · (1 - √(2λ))^{-O(1)} · (γ/(1 - √(2λ)))^{-O(t/λ²)}` on the graphs with at most `t` eigenvalues above `λ`. |
+| Theorem 1.1 (Cor. 7.21) | `independentSet_approximation` | On regular graphs with an independent set of `(1/2 - γ) n` vertices and `λ < 1/2`: one of `(1/2 - γ - (4 + c) γ/(1 - √(2λ))) n`, by one algorithm for all `t`, in time `poly(n) · (1 - √(2λ))^{-O(1)} · (γ/(1 - √(2λ)))^{-O(t/λ²)}` on the graphs with at most `t` eigenvalues above `λ`. |
 | Corollary 1.2 | `vertexCover_approximation` | A `(5/3 + ε)`-approximation of vertex cover on regular `λ₀`-one-sided expanders, in time `n^{O(1)} · O_ε(1)`. |
 | Theorem 1.3 (Thm. 7.9) | `threeColoring_balanced` | On regular `λ`-one-sided expanders with a partition into `3` parts of at most `(1/2 - γ) n` vertices, proper up to `δ n` vertices: `3` independent sets covering all but `O(λ/γ⁸ + δ/(λ γ⁸)) n`, in time `n^{O(1)} · O_{δ,γ,λ}(1)`. |
-| Theorem 7.12 | `plantedColoring_partial` | For `k ≥ 3` and `ε > 0`, one algorithm for all `t` that, on the graph obtained by planting a random `k`-coloring in a `d`-regular graph with at most `t` eigenvalues at least `λ₀`, with probability `1 - O_k(1/n)` runs in time `n^{O(1)} · (O_{k,ε}(1))^t` and outputs a `(k, O_k(1/(d + 1)^γ) + ε)`-coloring. |
-| Theorem 7.17 | `plantedColoring_full` | For `k ≥ 3`, on the graph obtained by planting a random `k`-coloring in a `d`-regular `λ₀`-one-sided expander with `d ≥ d₀(k)`: a proper `k`-coloring with probability `1 - O_k(1/n)`, in time `n^{O(1)} · O_k(1)`. |
 | Corollary 1.4 | `threeColoring_independentSet_or_coloring` | On regular `λ`-one-sided expanders with `3` independent sets covering all but `λ n` vertices: an independent set of `(1/2 - o_λ(1)) n` vertices or `3` covering all but `o_λ(1) n`, in time `n^{O(1)} · O_λ(1)`. |
 | Theorem 1.5 (Cor. 8.4) | `threeColoring_unbalanced_hardness` | Covering `(1/2 + γ) n` vertices of almost `3`-colorable regular graphs with `λ₂ = o(1)` is hard. |
 | Theorem 1.6 (Thm. 8.6) | `threeColoring_lowRank_hardness` | Covering `(7/9 + γ) n` vertices is hard with balanced almost-`3`-colorings and `λ₃ = o(1)`. |
 | Theorems 1.7 and 4.1 | `thresholdRank_graph`, `thresholdRank` | `((τ² - τ')/(1 - τ'))² #{eig ≤ -τ} ≤ #{eig ≥ τ'}` for graphs, `τ ≥ 0`; `σ² #{eig ≤ -λ} ≤ #{eig ≥ (λ² - σ)/(1 - σ)}` for nonnegative symmetric matrices of norm at most `1`, `λ ≥ 0`, `σ ∈ (0, 1)`. |
 | Theorem 1.8 (Cor. 7.2, 8.3) | `expanderColoring_distinctRows`, `expanderColoring_repeatedRows_hardness` | Without repeated rows: a `(k, O_M(√δ + λ + δ/λ))`-coloring of `(M, δ)`-colorable `λ`-one-sided expanders in time `n^{O(1)} · O_{δ,λ,M}(1)`; with repeated rows, `M`-expander-coloring is hard. |
 | Theorem 1.9 (Thm. 7.1, 8.2) | `expanderColoring_algorithm`, `expanderColoring_hardness` | A `(k', α + O_M(√δ + λ + δ/λ))`-coloring, `k'` the number of distinct rows of `M`, in time `n^{O(1)} · O_{δ,λ,M}(1)`; `(M, α - γ)`-expander-coloring is hard. |
+| Theorem 7.12 | `plantedColoring_partial` | For `k ≥ 3` and `ε > 0`, one algorithm for all `t` that, on the graph obtained by planting a random `k`-coloring in a `d`-regular graph with at most `t` eigenvalues at least `λ₀`, with probability `1 - O_k(1/n)` runs in time `n^{O(1)} · (O_{k,ε}(1))^t` and outputs a `(k, O_k(1/(d + 1)^γ) + ε)`-coloring. |
+| Theorem 7.17 | `plantedColoring_full` | For `k ≥ 3`, on the graph obtained by planting a random `k`-coloring in a `d`-regular `λ₀`-one-sided expander with `d ≥ d₀(k)`: a proper `k`-coloring with probability `1 - O_k(1/n)`, in time `n^{O(1)} · O_k(1)`. |
+| Theorem 7.20 | `independentSet_bottomRank` | Theorem 1.1 for the bottom of the spectrum: an independent set of `(1/2 - γ - (4 + c) γ/(1 - λ)) n` vertices, by one algorithm for all `t`, in time `poly(n) · (1 - λ)^{-O(1)} · (γ/(1 - λ))^{-O(t)}` on the graphs with at most `t` eigenvalues at most `-λ`. |
 
 * **Graphs** are simple and given by their adjacency tables; the spectrum is that of
   `D^(-1/2) A D^(-1/2)`, and a `λ`-one-sided expander has at most one eigenvalue above `λ`.
+* **Models** (`BHSV25.IsModel`) are row-stochastic matrices with zero diagonal, in detailed balance
+  with a positive vector, and with at most one positive eigenvalue; `α` is `BHSV25.alpha`, with the
+  inner sum over `π_b`. The vector must be positive. The paper's printed definition (Section 3)
+  allows `π ≥ 0`, but then every matrix would be reversible (take `π = 0`); the paper's proofs use
+  a positive `π` (Lemma 7.3).
 * **Running times** are those of deterministic multitape Turing machines (`BHSV25.RunsInTime`):
   a time `n^{O(1)} · g(p)` for parameters `p` is a degree `C`, fixed before all parameters, and for
   all values of `p` an algorithm running in time `g(p) · m^C` on inputs of length `m`. As in
@@ -68,11 +75,6 @@ Numbers refer to the arXiv version (v2).
   promises `λ₂ = o(1)` and `λ₃ = o(1)`: some `f` with `f n → 0` bounds the second, respectively
   third, eigenvalue of the graphs on `n` vertices. Theorem 1.6 has the body's promise of `3` classes
   of the same size covering `(1 - ε) n` vertices, which gives the introduction's.
-* **Models** (`BHSV25.IsModel`) are row-stochastic matrices with zero diagonal, in detailed balance
-  with a positive vector, and with at most one positive eigenvalue; `α` is `BHSV25.alpha`, with the
-  inner sum over `π_b`. The vector must be positive. The paper's printed definition (Section 3)
-  allows `π ≥ 0`, but then every matrix would be reversible (take `π = 0`); the paper's proofs use
-  a positive `π` (Lemma 7.3).
 
 The module doc of [Challenge.lean](Challenge.lean) explains each choice.
 
@@ -115,6 +117,15 @@ tested by comparing Gram determinants ([Net/Stop.lean](Net/Stop.lean), `BHSV25.N
 eigenspace (`BHSV25.Net.exists_cand_near_stop`). The filter makes the gap between `ℓ` and `h` so
 large that a threshold fits between them.
 
+### Threshold rank: Theorems 1.7 and 4.1
+
+[Spectral/ThresholdRank.lean](Spectral/ThresholdRank.lean) proves Theorem 4.1 for every `τ ≥ 0`
+and `τ' < τ²`: the witness of Lemma 4.4 comes from the vectors `wᵢ ⊗ wᵢ / ‖wᵢ‖` of the bottom
+eigenvectors, and the count from the Barak–Raghavendra–Steurer bound (Lemma 4.3). It is restated
+in the paper's parameters `λ, σ` (at `λ = 1`, with a threshold between `1` and the eigenvalues
+below it), for graphs (Theorem 1.7), and as Corollary 4.2, which the independent-set algorithms
+use.
+
 ### Independent sets: Theorem 7.20 and Corollary 7.21
 
 The algorithm is the paper's: round every vector of the net of the bottom eigenspace to an
@@ -146,6 +157,67 @@ of Lemma 7.3 (error `O_M(δ)`), and a net whose cost `512 m² η²/α²` is at m
 Theorem 7.9 the rows of the model are `γ/2` apart when `8 δ ≤ γ²` (the claim in its proof), and
 the threshold is `γ^{3/2}/8`; when `8 δ > γ²` or `λ ≥ γ³/512` the bound `B (λ + δ/λ)/γ⁸` is at
 least `1`.
+
+### Corollaries 1.2 and 1.4
+
+Each is one machine reading the parameters of the algorithms it combines. Corollary 1.2 runs
+Corollary 7.21 for `γ` on a grid up to `1/10`, keeps the largest independent set and outputs its
+complement. Corollary 1.4 runs Theorem 7.9 (with `δ = λ`, `γ = λ^{1/18}/2` and the bound `√λ` on the
+second eigenvalue) and Corollary 7.21 (with `γ = λ^{1/18}`), and outputs the coloring if it colors
+at least twice as many vertices as the independent set has, and the independent set otherwise,
+for `f λ = O(λ^{1/18})`.
+
+### Hardness
+
+The reductions are deterministic: explicit pseudo-random graphs instead of random biregular
+Ramanujan graphs, blow-ups made exactly regular by absorbers, integral sizes and degrees from
+dyadic designs, and eigenvalue counts proved directly (Theorem 1.6 needs no Theorem 4.1).
+
+* **Blow-ups** ([Hard/Blowup.lean](Hard/Blowup.lean)): `T ⊗ J + W ⊗ A_G` for a template on
+  finitely many cells, exactly regular because `W` has zero row sums ("absorber" cells join copies
+  of `G` by its complement). Its bilinear form is compared with the planted matrix `M_ab / π_b`,
+  which is at most `0` on vectors of sum `0`, from the characteristic polynomial of the symmetrized
+  model ([Hard/Spectral.lean](Hard/Spectral.lean)).
+* **Pseudo-random graphs** ([Hard/Cayley.lean](Hard/Cayley.lean),
+  [Hard/Dyadic.lean](Hard/Dyadic.lean)): Cayley sum graphs on `(𝔽₂^(2a+1))^r` from the bent
+  function `w₀ + ⟨w₁, w₂⟩`, with sets of every dyadic density; the templates come from finite
+  designs ([Hard/Design.lean](Hard/Design.lean)).
+* **Vanishing spectral bounds** (Theorems 1.5 and 1.6): the precision of the pseudo-random sets
+  grows with the input, `a = a₀ + ⌈log₂ n⌉`, so that the template has polynomially many cells, its
+  error is of order `2^{-a} ≤ 1/n`, and its degree, at least `2^a`, also makes the error from the
+  input graph vanish. The machine computes the template from the cell numbers (digits in base
+  `2 · 4^a`, the bent function of a sum by parity of bit counts), and the spectral bounds are
+  `c / 2^a ≤ c (b / N)^{1/e}` in terms of the output size `N`
+  ([Hard/Formula.lean](Hard/Formula.lean), [Hard/Rate.lean](Hard/Rate.lean)).
+* **Theorem 1.9 (2)** (Theorem 8.2, [Hard/Model.lean](Hard/Model.lean)): one group per color, with
+  densities `∝ ⌊D π_i M_ij⌋ / (s_i s_j)`, symmetric by detailed balance, so the template is exactly
+  regular; color units colored along the distribution of the classes and paired with their half
+  shift, which accounts for the fraction `1 - α`; absorbers in the partner group.
+* **Theorems 1.8 (2) and 1.5** ([Hard/Corollaries.lean](Hard/Corollaries.lean),
+  [Hard/Unbalanced.lean](Hard/Unbalanced.lean)): Theorem 1.8 (2) follows from Theorem 1.9 (2) with
+  `δ = α/2`. Theorem 1.5 is the reduction of Theorem 1.9 (2) for the model
+  `[[0, ½, ½], [1, 0, 0], [1, 0, 0]]` (`α = 1/2`), whose weights are exact at a precision `4c`, so
+  no rounding error remains.
+* **Theorem 1.6** (Theorem 8.6, [Hard/LowRank.lean](Hard/LowRank.lean)): five groups, a complete
+  join and a tripartite part of densities `3/4, 1/2, 1/2`; at most two eigenvalues above the
+  threshold `73 / 2^a` and five below minus it, so `R = 7`; the color classes are trimmed to the
+  same size.
+* **Fact 8.1** ([BansalKhot.lean](BansalKhot.lean), with maximum degree at most `η n` for every
+  `η > 0`) is proved from the conjecture on graphs: the bipartite double cover and Khot and Regev's
+  regularization ([UG/](UG/)) give hardness on left-regular instances whose parallel constraints
+  agree, which is all that Bansal and Khot's long code test with one free bit needs (as described
+  by Manurangsi, arXiv:1705.03581, §4.2); the module doc of [BansalKhot.lean](BansalKhot.lean)
+  explains both and gives the route. The reduction ([BK/](BK/)) has one vertex per random string
+  of the test, two being adjacent when they demand incompatible values of a folded long code, and
+  its soundness goes through the averaged long codes. A reduction from Fact 8.1's gap problem proves NP-hardness, and with a polynomial-time
+  checker of partial colorings, NP-hardness of a gap problem of colorings and an algorithm give
+  `NP ⊆ P` ([Hard/Glue.lean](Hard/Glue.lean)).
+* **"It Ain't Over Till It's Over"** [MOO10, Theorem 4.9] ([BK/AintOver.lean](BK/AintOver.lean)) is
+  proved without Gaussian space: the average on a random subcube is a multilinear polynomial in a
+  three-valued ensemble; an invariance principle (adapted from BGHKLMM26/RobustMIS) compares that
+  ensemble with uniform signs; and reverse hypercontractivity on the cube,
+  `E[f · T_r h] ≥ (E f)^k (E h)^k` for `r ≤ 1 - 1/k`, proved by induction from a two-point
+  inequality, replaces the Gaussian isoperimetric argument.
 
 ### Random planting: Theorems 7.12 and 7.17
 
@@ -204,41 +276,15 @@ of `k`. The analysis:
   [Planted/FullThm.lean](Planted/FullThm.lean)), and the machine
   ([Planted/FullPolyTime.lean](Planted/FullPolyTime.lean)).
 
-### Corollaries 1.2 and 1.4
-
-Each is one machine reading the parameters of the algorithms it combines. Corollary 1.2 runs
-Corollary 7.21 for `γ` on a grid up to `1/10`, keeps the largest independent set and outputs its
-complement. Corollary 1.4 runs Theorem 7.9 (with `δ = λ`, `γ = λ^{1/18}/2` and the bound `√λ` on the
-second eigenvalue) and Corollary 7.21 (with `γ = λ^{1/18}`), and outputs the coloring if it colors
-at least twice as many vertices as the independent set has, and the independent set otherwise,
-for `f λ = O(λ^{1/18})`.
-
-### Hardness
-
-The reductions are deterministic: explicit pseudo-random graphs instead of random biregular
-Ramanujan graphs, blow-ups made exactly regular by absorbers, integral sizes and degrees from
-dyadic designs, and eigenvalue counts proved directly (Theorem 1.6 needs no Theorem 4.1). For the
-vanishing spectral bounds of Theorems 1.5 and 1.6 the precision of the pseudo-random sets grows with
-the input, `a = a₀ + ⌈log₂ n⌉`, so that the template has polynomially many cells, its error is of
-order `2^{-a} ≤ 1/n`, and its degree, at least `2^a`, also makes the error from the input graph
-vanish; the template is computed by the machine from the cell numbers. For Theorem 1.5 the weights
-of the model are exact, so no rounding error remains. Fact 8.1
-is proved from the conjecture on graphs: the bipartite double cover and Khot and Regev's
-regularization give hardness on left-regular instances whose parallel constraints agree, which is
-all that Bansal and Khot's long code test with one free bit needs (as described by Manurangsi,
-arXiv:1705.03581, §4.2); [BK/README.md](BK/README.md) explains both. "It Ain't Over
-Till It's Over" is proved without Gaussian space: the invariance principle compares two discrete
-ensembles, and reverse hypercontractivity on the cube replaces the Gaussian isoperimetric
-argument.
-
 ## Map of the files
 
 | Files | Content |
 | --- | --- |
+| [Model.lean](Model.lean), [Challenge.lean](Challenge.lean) | Graphs and their spectra, models, colorings, running times, random planting, the gap problems, and the statements. |
 | [Time.lean](Time.lean) | Running times `K · m^C` from one polynomial-time machine that reads its parameters with the graph. |
 | [TimePad.lean](TimePad.lean) | Running times `K G · m^C` from one polynomial-time machine that reads unary paddings computed from the graph. |
 | [Spectral/Basic.lean](Spectral/Basic.lean), [Spectral/Eigen.lean](Spectral/Eigen.lean), [Spectral/GraphFacts.lean](Spectral/GraphFacts.lean) | Coordinates in an eigenbasis, spans of eigenvectors and their projections, counting eigenvalues by subspaces (Courant–Fischer); the normalized adjacency matrix: nonnegative, eigenvalues in `[-1, 1]`, `A/d` for `d`-regular graphs, and `xᵀ Ã x ≤ (∑ x)²/n + L(‖x‖² - (∑ x)²/n)` when at most one eigenvalue exceeds `L`. |
-| [Spectral/ThresholdRank.lean](Spectral/ThresholdRank.lean) | Theorem 4.1 for every `τ ≥ 0` and `τ' < τ²`: the witness of Lemma 4.4 from the vectors `wᵢ ⊗ wᵢ / ‖wᵢ‖` of the bottom eigenvectors, and the Barak–Raghavendra–Steurer bound (Lemma 4.3); in the paper's parameters `λ, σ` (at `λ = 1`, a threshold between `1` and the eigenvalues below it); the graph version, and Corollary 4.2. |
+| [Spectral/ThresholdRank.lean](Spectral/ThresholdRank.lean) | Theorem 4.1, in the paper's parameters and for graphs (Theorem 1.7), and Corollary 4.2. |
 | [Net/Machine.lean](Net/Machine.lean), [Net/PolyTime.lean](Net/PolyTime.lean), [Net/Correct.lean](Net/Correct.lean), [Net/Approx.lean](Net/Approx.lean), [Net/Spec.lean](Net/Spec.lean) | Integer matrices on lists of numbers, their products and powers in polynomial time with bounds on the entries; the two filters on the input of a graph; coefficients in an eigenbasis. |
 | [Net/Resid.lean](Net/Resid.lean), [Net/Greedy.lean](Net/Greedy.lean), [Net/GSGrid.lean](Net/GSGrid.lean), [Net/Ball.lean](Net/Ball.lean) | Residuals and Gram determinants; the greedy selection and its residual bound `(2^(T+1) - 1) ℓ` by back substitution; Gram–Schmidt coordinates and the grid point in the ball; the integer points of a ball, cut at a budget, and their number. |
 | [Net/GSMachine.lean](Net/GSMachine.lean), [Net/GSCorrect.lean](Net/GSCorrect.lean), [Net/BallPolyTime.lean](Net/BallPolyTime.lean), [Net/GSPolyTime.lean](Net/GSPolyTime.lean) | The greedy net on lists (Gram–Schmidt by Cramer's rule with complexitylib's determinant), its correctness for the two filters, and its polynomial-time certificate. |
@@ -255,24 +301,25 @@ argument.
 | [Alg/ExpanderGrid.lean](Alg/ExpanderGrid.lean), [Alg/ExpanderFull.lean](Alg/ExpanderFull.lean) | Theorem 7.1 and Corollary 7.2: the analysis, the algorithm, its parameters and running time. |
 | [Alg/ColoringAnalysis.lean](Alg/ColoringAnalysis.lean), [Alg/ColoringFull.lean](Alg/ColoringFull.lean) | Partitions into three parts and their separated rows; Theorem 7.9. |
 | [Alg/Coloring.lean](Alg/Coloring.lean), [Alg/ColoringOrFull.lean](Alg/ColoringOrFull.lean) | The combination of a coloring and an independent set; Corollary 1.4. |
-| [Planted/Lift.lean](Planted/Lift.lean), [Planted/Recovery.lean](Planted/Recovery.lean) | Theorem 5.1 with a grid of centers for any symmetric matrix `Q` with `|xᵀ Q x| ≤ ‖x‖²` and dispersions at most `Δ n`: the lift, the symmetrized model, Lemmas 5.2, 5.3 and 7.4. |
+| [Hard/Glue.lean](Hard/Glue.lean) | NP-hardness from Fact 8.1's gap problem (the graph without vertices first replaced by two isolated vertices); a polynomial-time checker of partial colorings, for `NP ⊆ P`. |
+| [Hard/Blowup.lean](Hard/Blowup.lean), [Hard/Coloring.lean](Hard/Coloring.lean), [Hard/Machine.lean](Hard/Machine.lean) | Blow-ups `T ⊗ J + W ⊗ A_G` with absorbers; the comparison with the planted matrix, the colorings in the yes and no cases, and the blow-up in polynomial time. |
+| [Hard/Cayley.lean](Hard/Cayley.lean), [Hard/Dyadic.lean](Hard/Dyadic.lean), [Hard/Design.lean](Hard/Design.lean), [Hard/Pipeline.lean](Hard/Pipeline.lean) | Cayley sum graphs from a bent function, with sets of every dyadic density; templates from finite designs, their regularity and eigenvalue counts. |
+| [Hard/Spectral.lean](Hard/Spectral.lean) | The planted matrix `M_ab / π_b` is at most `0` on vectors of sum `0`, from the characteristic polynomial of the symmetrized model; eigenvalue counting. |
+| [Hard/Formula.lean](Hard/Formula.lean), [Hard/MachineA.lean](Hard/MachineA.lean), [Hard/Rate.lean](Hard/Rate.lean) | Templates of growing precision: the template from the cell numbers, the blow-up at precision `a₀ + ⌈log₂ n⌉` in polynomial time, and the spectral bounds in terms of the output size. |
+| [Hard/LowRankDesign.lean](Hard/LowRankDesign.lean), [Hard/LowRankFacts.lean](Hard/LowRankFacts.lean), [Hard/LowRank.lean](Hard/LowRank.lean) | Theorem 1.6 (Theorem 8.6): the design, its eigenvalue counts, and the color classes trimmed to the same size. |
+| [Hard/ModelUnits.lean](Hard/ModelUnits.lean), [Hard/ModelDesign.lean](Hard/ModelDesign.lean), [Hard/ModelCount.lean](Hard/ModelCount.lean), [Hard/ModelEst.lean](Hard/ModelEst.lean), [Hard/ModelYes.lean](Hard/ModelYes.lean), [Hard/ModelNo.lean](Hard/ModelNo.lean), [Hard/Model.lean](Hard/Model.lean) | Theorem 1.9 (2) (Theorem 8.2): the template with one group per color, its color units and absorbers, and the yes and no cases. |
+| [Hard/Corollaries.lean](Hard/Corollaries.lean), [Hard/Unbalanced.lean](Hard/Unbalanced.lean) | Theorem 1.8 (2) from Theorem 1.9 (2); Theorem 1.5 by the reduction of Theorem 1.9 (2) for one model. |
+| [BansalKhot.lean](BansalKhot.lean) | Fact 8.1, with maximum degree at most `η n` for every `η > 0` (`BHSV25.BansalKhot`), from the conjecture (`BHSV25.bansalKhot`). |
+| [UG/Value.lean](UG/Value.lean), [UG/Cover.lean](UG/Cover.lean), [UG/Regular.lean](UG/Regular.lean), [UG/Machine.lean](UG/Machine.lean), [UG/Bridge.lean](UG/Bridge.lean) | From the conjecture on graphs to left-regular bipartite instances whose parallel constraints agree: the double cover (value at most doubled, by mixing the two labelings over all `2^n` choices) and Khot and Regev's regularization (value within `1/ℓ`), in polynomial time. |
+| [BK/Basic.lean](BK/Basic.lean), [BK/Graph.lean](BK/Graph.lean), [BK/Vertices.lean](BK/Vertices.lean), [BK/Copies.lean](BK/Copies.lean), [BK/Complete.lean](BK/Complete.lean), [BK/Sound.lean](BK/Sound.lean), [BK/Machine.lean](BK/Machine.lean), [BK/Main.lean](BK/Main.lean) | Bansal and Khot's reduction: long codes, influences and the decoding of labels (from [BGHKLMM26](../BGHKLMM26)), the graph, completeness, soundness, maximum degree `≤ η n` by disjoint copies, polynomial time, and the assembly. |
+| [BK/AintOver.lean](BK/AintOver.lean), [BK/Ensemble.lean](BK/Ensemble.lean), [BK/Invariance*.lean](BK/Invariance.lean), [BK/HyperReverse.lean](BK/HyperReverse.lean), [BK/AintProof.lean](BK/AintProof.lean) | "It Ain't Over Till It's Over" [MOO10, Theorem 4.9]: the three-valued ensemble, an invariance principle (adapted from BGHKLMM26/RobustMIS), and reverse hypercontractivity on the cube. |
+| [Planted/Lift.lean](Planted/Lift.lean), [Planted/Recovery.lean](Planted/Recovery.lean) | Theorem 5.1 with a grid of centers for any symmetric matrix `Q` with `\|xᵀ Q x\| ≤ ‖x‖²` and dispersions at most `Δ n`: the lift, the symmetrized model, Lemmas 5.2, 5.3 and 7.4. |
 | [Planted/Net.lean](Planted/Net.lean), [Planted/Rank.lean](Planted/Rank.lean) | The net and the rounding of Theorem 7.1 analysed with `A_G / d`; Lemma 7.16 (the threshold rank after planting). |
 | [Planted/Prob.lean](Planted/Prob.lean), [Planted/Conc.lean](Planted/Conc.lean) | Uniform colorings: McDiarmid's inequality in counting form, resampling one color; Lemmas 7.13 to 7.15 and the bad colorings. |
 | [Planted/Partial.lean](Planted/Partial.lean), [Planted/Stop.lean](Planted/Stop.lean), [Planted/StopCorrect.lean](Planted/StopCorrect.lean), [Planted/PartialThm.lean](Planted/PartialThm.lean) | Theorem 7.12: the good candidate of the list (Theorem B.1), the algorithm that finds the number of rounds, one good coloring, the probability and the running time. |
 | [Planted/Expander.lean](Planted/Expander.lean), [Planted/StatBad.lean](Planted/StatBad.lean), [Planted/Comp.lean](Planted/Comp.lean) | Lemmas 7.18, B.19 and 7.19; statistically bad vertices (Lemma B.14); stuck sets and the components of the uncolored vertices (Lemma B.21). |
 | [Planted/FullAlg.lean](Planted/FullAlg.lean), [Planted/Uncolor.lean](Planted/Uncolor.lean), [Planted/Recolor.lean](Planted/Recolor.lean), [Planted/Brute.lean](Planted/Brute.lean) | The algorithm of Theorem 7.17 and its steps: uncoloring (Lemma B.20), safe recoloring, closures of the uncolored vertices and the brute force. |
 | [Planted/FullCorrect.lean](Planted/FullCorrect.lean), [Planted/FullPolyTime.lean](Planted/FullPolyTime.lean), [Planted/FullThm.lean](Planted/FullThm.lean) | Theorem 7.17: one good coloring, the polynomial-time certificate, the probability and the theorem. |
-| [Hard/Glue.lean](Hard/Glue.lean) | A reduction from Fact 8.1's gap problem proves NP-hardness (the graph without vertices first replaced by two isolated vertices); a polynomial-time checker of partial colorings with enough colored vertices, by which NP-hardness of a gap problem of colorings and an algorithm give `NP ⊆ P`. |
-| [Hard/Blowup.lean](Hard/Blowup.lean), [Hard/Coloring.lean](Hard/Coloring.lean), [Hard/Machine.lean](Hard/Machine.lean) | Blow-ups `T ⊗ J + W ⊗ A_G` of a template on finitely many cells, exactly regular because `W` has zero row sums ("absorber" cells join copies of `G` by its complement); the bilinear-form comparison with the planted matrix, the colorings in the yes and no cases, and the blow-up in polynomial time. |
-| [Hard/Cayley.lean](Hard/Cayley.lean), [Hard/Dyadic.lean](Hard/Dyadic.lean), [Hard/Design.lean](Hard/Design.lean), [Hard/Pipeline.lean](Hard/Pipeline.lean) | Explicit pseudo-random graphs in place of random biregular graphs: Cayley sum graphs on `(𝔽₂^(2a+1))^r` from the bent function `w₀ + ⟨w₁, w₂⟩`, with sets of every dyadic density; templates from finite designs, their regularity and eigenvalue counts. |
-| [Hard/Spectral.lean](Hard/Spectral.lean) | The planted matrix `M_ab / π_b` is at most `0` on vectors of sum `0`, from the characteristic polynomial of the symmetrized model; eigenvalue counting. |
-| [Hard/Formula.lean](Hard/Formula.lean), [Hard/MachineA.lean](Hard/MachineA.lean), [Hard/Rate.lean](Hard/Rate.lean) | Templates of growing precision: the template computed from cell numbers (digits in base `2 · 4^a`, the bent function of a sum by parity of bit counts); the blow-up by the template of precision `a₀ + ⌈log₂ n⌉` in polynomial time; spectral bounds `c / 2^a ≤ c (b / N)^{1/e}` in terms of the output size `N`. |
-| [Hard/LowRankDesign.lean](Hard/LowRankDesign.lean), [Hard/LowRankFacts.lean](Hard/LowRankFacts.lean), [Hard/LowRank.lean](Hard/LowRank.lean) | Theorem 1.6 (Theorem 8.6): five groups, a complete join and a tripartite part of densities `3/4, 1/2, 1/2`; at most two eigenvalues above the threshold `73 / 2^a` and five below minus it, so `R = 7`; the color classes trimmed to the same size. |
-| [Hard/ModelUnits.lean](Hard/ModelUnits.lean), [Hard/ModelDesign.lean](Hard/ModelDesign.lean), [Hard/ModelCount.lean](Hard/ModelCount.lean), [Hard/ModelEst.lean](Hard/ModelEst.lean), [Hard/ModelYes.lean](Hard/ModelYes.lean), [Hard/ModelNo.lean](Hard/ModelNo.lean), [Hard/Model.lean](Hard/Model.lean) | Theorem 1.9 (2) (Theorem 8.2): one group per color, with densities `∝ ⌊D π_i M_ij⌋ / (s_i s_j)` (symmetric by detailed balance, so the template is exactly regular); color units colored along the distribution of the classes and paired with their half shift, which accounts for the fraction `1 - α`; absorbers in the partner group. |
-| [Hard/Corollaries.lean](Hard/Corollaries.lean), [Hard/Unbalanced.lean](Hard/Unbalanced.lean) | Theorem 1.8 (2) from Theorem 1.9 (2) with `δ = α/2`; Theorem 1.5 by the reduction of Theorem 1.9 (2) for the model `[[0, ½, ½], [1, 0, 0], [1, 0, 0]]` (`α = 1/2`), whose weights are exact at a precision `4c`, with the precision of the template growing with the input. |
-| [BansalKhot.lean](BansalKhot.lean) | Fact 8.1, with maximum degree at most `η n` for every `η > 0` (`BHSV25.BansalKhot`), from the conjecture (`BHSV25.bansalKhot`). |
-| [UG/Value.lean](UG/Value.lean), [UG/Cover.lean](UG/Cover.lean), [UG/Regular.lean](UG/Regular.lean), [UG/Machine.lean](UG/Machine.lean), [UG/Bridge.lean](UG/Bridge.lean) | From the conjecture on graphs to left-regular bipartite instances whose parallel constraints agree: the double cover (value at most doubled, by mixing the two labelings over all `2^n` choices) and Khot and Regev's regularization (value within `1/ℓ`), in polynomial time. |
-| [BK/Basic.lean](BK/Basic.lean), [BK/Graph.lean](BK/Graph.lean), [BK/Vertices.lean](BK/Vertices.lean), [BK/Copies.lean](BK/Copies.lean), [BK/Complete.lean](BK/Complete.lean), [BK/Sound.lean](BK/Sound.lean), [BK/Machine.lean](BK/Machine.lean), [BK/Main.lean](BK/Main.lean) | The reduction: long codes, influences and the decoding of labels (from BGHKLMM26); one vertex per random string of the test, adjacent when they demand incompatible values of a folded long code; completeness, soundness through the averaged long codes, maximum degree `≤ η n` by disjoint copies, polynomial time, and the assembly. |
-| [BK/AintOver.lean](BK/AintOver.lean), [BK/Ensemble.lean](BK/Ensemble.lean), [BK/Invariance*.lean](BK/Invariance.lean), [BK/HyperReverse.lean](BK/HyperReverse.lean), [BK/AintProof.lean](BK/AintProof.lean) | "It Ain't Over Till It's Over" [MOO10, Theorem 4.9]: the average on a random subcube is a multilinear polynomial in a three-valued ensemble; an invariance principle between that ensemble and uniform signs (adapted from BGHKLMM26/RobustMIS), and reverse hypercontractivity on the cube, `E[f · T_r h] ≥ (E f)^k (E h)^k` for `r ≤ 1 - 1/k`, proved by induction from a two-point inequality. |
+| [Solution.lean](Solution.lean) | The fifteen theorems, checked by `lake comparator` ([comparator.json](comparator.json)). |
 
 *Formalized by [Claude Code](https://claude.com/claude-code).*

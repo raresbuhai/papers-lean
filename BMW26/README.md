@@ -1,33 +1,36 @@
 # BMW26: Efficient recovery of latent coordinate structure from sparse observations of the hypercube
 
+Buhai, Mazzali, Wrzos-Kaminska. *Efficient recovery of latent coordinate structure from sparse
+observations of the hypercube*. [arXiv:2610.11741](https://arxiv.org/abs/2610.11741). Numbers
+refer to the arXiv version (v1).
+
 The results are [BMW26, Theorem 1.2] (the main result), Theorem 4.1 (the sum-of-squares FKN
 theorem) and Lemma 5.1 (spectral concentration of the percolated hypercube), stated in
 [Challenge.lean](Challenge.lean) with the definitions of [Model.lean](Model.lean) and proved in
-[Solution.lean](Solution.lean), with only the standard axioms; `lake comparator` checks them.
+[Solution.lean](Solution.lean), with only the standard axioms; `lake comparator` checks them (see
+[Checking a paper](../README.md#checking-a-paper)).
 
 The formal proof follows the paper's argument in outline, though some of its steps take a
 different route (see [below](#how-the-proof-is-implemented)).
-
-Numbers refer to the arXiv version (v1).
 
 ## The statements
 
 | Result | Lean name | Content |
 | --- | --- | --- |
 | Theorem 1.2 | `hypercube_recovery` | For every `c` there are `C` and a polynomial-time algorithm that, given a sample of `Q_d(p)` with `p ≥ C log d / d` whose vertices have been renamed, recovers the hidden vectors of all but `2^d / d^c` vertices, up to an automorphism of `Q_d`, with probability `1 - o_d(1)`. |
-| Theorem 4.1 | `sos_fkn` | The constraints `∑ᵢ ⟨f, χᵢ⟩² ≥ 1 - δ`, `f(x)² = 1`, `δ ≥ 0` prove `∑ᵢ ⟨f, χᵢ⟩⁴ ≥ 1 - Kδ` in degree `4`, by a proof in which `δ` appears only as the monomial `δ` and whose coefficients are at most `2^(K (d + 1))` in absolute value; also with `δ` replaced by any polynomial of degree at most `2`, by a proof whose coefficients are at most `2^(b + K (d + 1))` when those of that polynomial are at most `2^b`. |
-| Lemma 5.1 | `spectral_concentration` | For every `ε > 0` and `C₁, C₂`, if `p ≥ C log d / d`, then with probability at least `1 - 1/d^C₁` some set `R` of at most `2^d / d^C₂` vertices has `|gᵀ(L' - pL)g| ≤ ε p gᵀLg + d² ∑_{x ∈ R} (g x - ḡ)²` for every `g`. |
+| Theorem 4.1 | `sos_fkn` | The constraints `∑ᵢ ⟨f, χᵢ⟩² ≥ 1 - δ`, `f(x)² = 1`, `δ ≥ 0` prove `∑ᵢ ⟨f, χᵢ⟩⁴ ≥ 1 - Kδ` in degree `4`, by a proof in which `δ` appears only as the monomial `δ` and whose coefficients are at most `2^(K (d + 1))` in absolute value; also with `δ` replaced by any polynomial of degree at most `2`. |
+| Lemma 5.1 | `spectral_concentration` | For every `ε > 0` and `C₁, C₂`, if `p ≥ C log d / d`, then with probability at least `1 - 1/d^C₁` some set `R` of at most `2^d / d^C₂` vertices has `\|gᵀ(L' - pL)g\| ≤ ε p gᵀLg + d² ∑_{x ∈ R} (g x - ḡ)²` for every `g`. |
 
 * **The model** ([Model.lean](Model.lean)): `Q_d(p)` keeps each edge of the hypercube
   independently with probability `p`; the vertices of the sample are renamed by a bijection that
   may be any function of the sample, and the algorithm sees only the renamed graph (its adjacency
   table), not `p`.
+* **Algorithms** are multitape Turing machines with coins, running in time `O((N + 2)^k)` on inputs
+  of length `N` (`BMW26.RunsInTime`, as in [BKS23](../BKS23) and [BBKS24](../BBKS24)); the
+  probability is over the sample and the coins.
 * **Recovery** (`BMW26.Recovers`) is up to one automorphism of `Q_d` (a permutation of the
   coordinates and a sign flip of each), and `1/d^O(1)` is `d^(-c)` for every `c`, with `C` and the
   algorithm depending on `c`.
-* **Algorithms** are multitape Turing machines with coins, running in time `O((N + 2)^k)` on inputs
-  of length `N` (`BMW26.RunsInTime`, as in BKS23 and BBKS24); the probability is over the sample and
-  the coins.
 * **Theorem 4.1** is stated with the sum-of-squares proofs of
   `Background/SumOfSquares/Proof.lean`, in the variables `f(x)` and `δ`, in two parts. The first
   is the paper's statement with its "`δ` only appears in degree-1 monomials", literally: in every
@@ -112,12 +115,14 @@ derive the statements of Theorem 4.1 and Lemma 5.1.
 
 | Files | Content |
 | --- | --- |
+| [Model.lean](Model.lean), [Challenge.lean](Challenge.lean) | The model `Q_d(p)`, recovery, randomized algorithms, quadratic forms, and the statements. |
 | [Cube/Basic.lean](Cube/Basic.lean) | Flips, characters, Fourier expansion and Parseval, energies and Laplacians of weighted subgraphs of the hypercube. |
-| [Prob/Coins.lean](Prob/Coins.lean), [Prob/Percolation.lean](Prob/Percolation.lean) | Independent coins: second moments, Bernstein, Markov; `Q_d(p)` as coins, half-cubes, edge counts. |
-| [Spec/](Spec/) | Lemma 5.1: `Defs`, `BadSet` (5.2), `Discrepancy` (5.3), `BiluLinial` (5.4, 5.5), `LowDegree` (5.6, 5.8), `BadFourier` (5.9), `Deterministic` and `Main` (diagonal form), `Paper` (the paper's form). |
-| [SoS/Basic.lean](SoS/Basic.lean), [SoS/FKN.lean](SoS/FKN.lean), [SoS/Main.lean](SoS/Main.lean) | Polynomials of the analysis, Theorem 4.1, Lemmas 6.3–6.9. |
-| [Round/](Round/) | The rounding as a function on lists, the second moments, and its correctness. |
 | [Alg/](Alg/) | The program as an input of the solver, the algorithm and its correctness relative to the solver, its running time. |
+| [Round/](Round/) | The rounding as a function on lists, the second moments, and its correctness. |
+| [SoS/Basic.lean](SoS/Basic.lean), [SoS/FKN.lean](SoS/FKN.lean), [SoS/Main.lean](SoS/Main.lean) | Polynomials of the analysis, Theorem 4.1, Lemmas 6.3–6.9. |
+| [Spec/](Spec/) | Lemma 5.1: `Defs`, `BadSet` (5.2), `Discrepancy` (5.3), `BiluLinial` (5.4, 5.5), `LowDegree` (5.6, 5.8), `BadFourier` (5.9), `Deterministic` and `Main` (diagonal form), `Paper` (the paper's form). |
+| [Prob/Coins.lean](Prob/Coins.lean), [Prob/Percolation.lean](Prob/Percolation.lean) | Independent coins: second moments, Bernstein, Markov; `Q_d(p)` as coins, half-cubes, edge counts. |
 | [Assembly.lean](Assembly.lean), [Paper/](Paper/) | Theorem 1.2, Theorem 4.1 and Lemma 5.1 from the parts. |
+| [Solution.lean](Solution.lean) | The three results, checked by `lake comparator` ([comparator.json](comparator.json)). |
 
 *Formalized by [Claude Code](https://claude.com/claude-code).*

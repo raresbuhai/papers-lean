@@ -1,14 +1,17 @@
 # BS23: Beyond parallel pancakes: quasi-polynomial time guarantees for non-spherical Gaussian mixtures
 
+Buhai, Steurer. *Beyond parallel pancakes: quasi-polynomial time guarantees for non-spherical
+Gaussian mixtures*. COLT 2023. [arXiv:2112.05445](https://arxiv.org/abs/2112.05445). Numbers refer
+to the arXiv version (v2).
+
 The results are finite-precision variants of [BS23, Theorems 1.1, 1.2 and 1.3], in their full
 versions (Theorems 4.2, 6.1 and 7.1), stated in [Challenge.lean](Challenge.lean) with the
 definitions of [Model.lean](Model.lean) and proved in [Solution.lean](Solution.lean), with only the
-standard axioms; `lake comparator` checks them. The algorithms read rational approximations of the
-sample points, and the guarantees hold for every such approximation. Theorem 1.1's running time,
-`poly(|x|) · d^O(δ^(-O(1)) log (1/wmin))` for the failure probability `δ`, is polynomial rather
-than linear in `n` (the paper has `n · d^O(log (1/wmin))` for `δ = 1/100`). This is due to the
-machine model: the paper counts unit-cost arithmetic operations in a RAM model, while the theorems
-here are about multitape Turing machines, which simulate a word RAM only with polynomial overhead.
+standard axioms; `lake comparator` checks them (see
+[Checking a paper](../README.md#checking-a-paper)). The algorithms read rational approximations of
+the sample points, and the guarantees hold for every such approximation. Theorem 1.1's running
+time is polynomial rather than linear in `n`, since the theorems are about Turing machines (see
+[below](#the-statements)).
 
 The formal proofs follow the paper's sum-of-squares algorithms in outline, though some of their
 steps take a different route (see [below](#how-the-proof-is-implemented)). In addition to the
@@ -16,8 +19,6 @@ proof of Theorem 1.2 that follows the paper, which is the one [Solution.lean](So
 the formalization contains a second, independent proof of Theorem 1.2 with a different algorithm,
 which uses no sum-of-squares and runs in polynomial time
 (see [below](#theorem-12-a-second-proof-polynomial-time)).
-
-Numbers refer to the arXiv version (v2).
 
 ## The statements
 
@@ -47,7 +48,11 @@ Numbers refer to the arXiv version (v2).
 * **Theorem 1.1** holds with probability `1 - δ` for every failure probability `δ > 0`, which is
   part of the input; one algorithm and one `C` serve all `δ`. The paper's statement is the case
   `δ = 1/100`; the factor `⌈1/δ⌉^C` in the separation and in the exponents of the sample size and
-  the running time comes from the proof. Its running time is discussed above.
+  the running time comes from the proof. Its running time,
+  `poly(|x|) · d^O(δ^(-O(1)) log (1/wmin))`, is polynomial rather than linear in `n` (the paper has
+  `n · d^O(log (1/wmin))` for `δ = 1/100`). This is due to the machine model: the paper counts
+  unit-cost arithmetic operations in a RAM model, while the theorems here are about multitape
+  Turing machines, which simulate a word RAM only with polynomial overhead.
 * **Theorems 1.2 and 1.3**: the error `(p_min/k)^O(1)` is `(wmin/k)^c` for every `c`, with the
   algorithm and `C` depending on `c`, and "with high probability" is probability
   `1 - (wmin/k)^c` at the paper's sample size. Every label is one of `0, …, k - 1`. In Theorem 1.2,
@@ -82,6 +87,69 @@ The module doc of [Challenge.lean](Challenge.lean) explains each choice.
   and [Common/Gaussian.lean](Common/Gaussian.lean): Hermite polynomials `He_m(x; q)` with a
   variance parameter (homogeneity, the heat identity, inversion, derivatives) and the moments of
   standard Gaussian vectors.
+
+### Theorem 1.1: separating bipartition
+
+The algorithm ([Separating/Alg.lean](Separating/Alg.lean)) is the paper's, with `s = logInv wmin + 1`
+and `t = r s`:
+
+1. the points are centered and whitened with rational arithmetic
+   ([Separating/Whiten.lean](Separating/Whiten.lean)): the rows of the whitening matrix are the
+   `Ĉ`-orthogonal basis vectors of [Colinear/Basis.lean](Colinear/Basis.lean) divided by powers of
+   two, so the whitened points `xⱼ` have a diagonal covariance with entries in `(1/2, 2]`, and the
+   explicit ball constraint that the solver needs is the paper's bound on the covariance norm of
+   `v`, up to constants;
+2. the solver of [../Background/SumOfSquares](../Background/SumOfSquares/README.md) finds a
+   degree-`2t` pseudo-expectation `Ẽ` over `v ∈ ℝ^d` with `‖v‖² ≤ 256`, `F_{2s}(v) ≥ 1` and
+   `F_{2t}(v) ≤ 1024^t`, for the pair moments `F_p(v) = n⁻² ∑_{i,j} ⟨xᵢ - xⱼ, v⟩^p`
+   ([Separating/Program.lean](Separating/Program.lean));
+3. a pivot `p` is read from the coins ([Separating/Coins.lean](Separating/Coins.lean)), and the
+   points `j` with `q(x_p - xⱼ) ≤ τ = 1/(4 · 64^s)` form one side, for the separating polynomial
+   `q(u) = Ẽ ⟨u, v⟩^(2s)`.
+
+The analysis:
+
+* **Feasibility** ([Separating/Feasible.lean](Separating/Feasible.lean)): on the good event, the
+  point `v ∝ Σ⁻¹ (μₐ - μ_b)` for the two farthest components, in the whitened coordinates,
+  satisfies the constraints, so the program is valid.
+* **The pseudo-expectation** ([Separating/PseudoAnalysis.lean](Separating/PseudoAnalysis.lean)) is
+  analyzed with its exact positivity on squares (only the constraints are satisfied
+  approximately), each constraint on its own, the bound `|Ẽ f| ≤ ‖f‖₁ 258^t` from the ball, the
+  weak triangle inequality `Ẽ (A + B)^(2s) ≤ 2^(2s-1) (Ẽ A^(2s) + Ẽ B^(2s))` and Jensen's
+  inequality for powers of a sum of squares
+  ([../Background/SumOfSquares/PseudoBounds.lean](../Background/SumOfSquares/PseudoBounds.lean)),
+  with no sum-of-squares proofs from the constraints. The same-cluster terms of `F_{2t}`, compared
+  with Gaussian moments, bound `Ẽ N^t` for the noise form `N(v) = vᵀ W Σ Wᵀ v`, Jensen bounds
+  `Ẽ N^s`, and then `Ẽ F_{2s} ≥ 1/2` makes `q` large on the difference of the whitened means of
+  two distinct clusters. The empirical moments enter as polynomials close to the Gaussian ones in
+  coefficient norm ([Separating/MomentClose.lean](Separating/MomentClose.lean)), and
+  [Separating/Setup.lean](Separating/Setup.lean) compares `Ĉ` with `Σ`.
+* **Markov over pairs of sample points**: at most a `δ₁` fraction of the pairs within a cluster
+  have `q(xᵢ - xⱼ) > τ`, and at most a `δ₁` fraction of the pairs between those two clusters have
+  `q(xᵢ - xⱼ) < 16^(-s)/2`. These count pairs of the sample itself, so they are deterministic, and
+  that `q` depends on the sample does not matter; the paper bounds `q` on fresh samples from the
+  components instead.
+* **The bipartition** ([Separating/Rounding.lean](Separating/Rounding.lean)) is combinatorial: by
+  the weak triangle inequality for `q`, all pivots but `100 δ₁ n` give a separating bipartition,
+  and the pivot, read from `⌈log₂ n⌉ + Kc` coins, avoids them with probability at least
+  `1 - 100 δ₁ - n / 2^(⌈log₂ n⌉ + Kc)`. The probability `1 - δ` comes from the degree ratio
+  `r = t / s = 2^41 R`, `R = max ⌈1/δ⌉ 100`, with `Kc = ⌈log₂ (4R)⌉`, and a separation growing
+  with it: the analysis needs the separation `Cs log (1/wmin)` and the sample size
+  `((d + 1)/wmin)^(Cs (log (1/wmin) + 1))` for some `Cs = O(R²)`, which `C ⌈1/δ⌉^C` covers for
+  `C ≥ 2^106`.
+* **The running time** `poly(|x|) · d^O(⌈1/δ⌉ log (1/wmin))`
+  ([Separating/PolyTime.lean](Separating/PolyTime.lean),
+  [Separating/RunTime.lean](Separating/RunTime.lean)): the solver is run with the budget
+  `(d + 5)^(2t + 1) (|P| + 2)³` rather than its default `(|P| + 2)^(2t + 1)`, which would give
+  `|x|^O(log (1/wmin))`. Its correctness is proved for every budget that suffices
+  (`SoS.Correct.core_correct_of_budget` in
+  [../Background/SumOfSquares/Algorithm/Correct.lean](../Background/SumOfSquares/Algorithm/Correct.lean)),
+  and the powers `⟨u, v⟩^p` in the program are cut at the budget. One machine serves all `δ`: it
+  computes `R` from `δ` and writes it and the budget in unary, and the list program takes `r` and
+  `Kc` as part of its input, so the degree of its polynomial time bound does not depend on `δ`.
+  For `δ ≤ 0` it outputs nothing.
+
+[Separating/Main.lean](Separating/Main.lean) puts the parts together.
 
 ### Theorem 1.2: colinear means
 
@@ -216,69 +284,6 @@ deterministic on the good event:
 [Colinear/Main.lean](Colinear/Main.lean) puts the parts together; this proof needs
 `n ≥ σ⁻⁴ ((d + 1)/wmin)^(2c + 8200 (logInv wmin + 1))` samples.
 
-### Theorem 1.1: separating bipartition
-
-The algorithm ([Separating/Alg.lean](Separating/Alg.lean)) is the paper's, with `s = logInv wmin + 1`
-and `t = r s`:
-
-1. the points are centered and whitened with rational arithmetic
-   ([Separating/Whiten.lean](Separating/Whiten.lean)): the rows of the whitening matrix are the
-   `Ĉ`-orthogonal basis vectors of [Colinear/Basis.lean](Colinear/Basis.lean) divided by powers of
-   two, so the whitened points `xⱼ` have a diagonal covariance with entries in `(1/2, 2]`, and the
-   explicit ball constraint that the solver needs is the paper's bound on the covariance norm of
-   `v`, up to constants;
-2. the solver of [../Background/SumOfSquares](../Background/SumOfSquares/README.md) finds a
-   degree-`2t` pseudo-expectation `Ẽ` over `v ∈ ℝ^d` with `‖v‖² ≤ 256`, `F_{2s}(v) ≥ 1` and
-   `F_{2t}(v) ≤ 1024^t`, for the pair moments `F_p(v) = n⁻² ∑_{i,j} ⟨xᵢ - xⱼ, v⟩^p`
-   ([Separating/Program.lean](Separating/Program.lean));
-3. a pivot `p` is read from the coins ([Separating/Coins.lean](Separating/Coins.lean)), and the
-   points `j` with `q(x_p - xⱼ) ≤ τ = 1/(4 · 64^s)` form one side, for the separating polynomial
-   `q(u) = Ẽ ⟨u, v⟩^(2s)`.
-
-The analysis:
-
-* **Feasibility** ([Separating/Feasible.lean](Separating/Feasible.lean)): on the good event, the
-  point `v ∝ Σ⁻¹ (μₐ - μ_b)` for the two farthest components, in the whitened coordinates,
-  satisfies the constraints, so the program is valid.
-* **The pseudo-expectation** ([Separating/PseudoAnalysis.lean](Separating/PseudoAnalysis.lean)) is
-  analyzed with its exact positivity on squares (only the constraints are satisfied
-  approximately), each constraint on its own, the bound `|Ẽ f| ≤ ‖f‖₁ 258^t` from the ball, the
-  weak triangle inequality `Ẽ (A + B)^(2s) ≤ 2^(2s-1) (Ẽ A^(2s) + Ẽ B^(2s))` and Jensen's
-  inequality for powers of a sum of squares
-  ([../Background/SumOfSquares/PseudoBounds.lean](../Background/SumOfSquares/PseudoBounds.lean)),
-  with no sum-of-squares proofs from the constraints. The same-cluster terms of `F_{2t}`, compared
-  with Gaussian moments, bound `Ẽ N^t` for the noise form `N(v) = vᵀ W Σ Wᵀ v`, Jensen bounds
-  `Ẽ N^s`, and then `Ẽ F_{2s} ≥ 1/2` makes `q` large on the difference of the whitened means of
-  two distinct clusters. The empirical moments enter as polynomials close to the Gaussian ones in
-  coefficient norm ([Separating/MomentClose.lean](Separating/MomentClose.lean)), and
-  [Separating/Setup.lean](Separating/Setup.lean) compares `Ĉ` with `Σ`.
-* **Markov over pairs of sample points**: at most a `δ₁` fraction of the pairs within a cluster
-  have `q(xᵢ - xⱼ) > τ`, and at most a `δ₁` fraction of the pairs between those two clusters have
-  `q(xᵢ - xⱼ) < 16^(-s)/2`. These count pairs of the sample itself, so they are deterministic, and
-  that `q` depends on the sample does not matter; the paper bounds `q` on fresh samples from the
-  components instead.
-* **The bipartition** ([Separating/Rounding.lean](Separating/Rounding.lean)) is combinatorial: by
-  the weak triangle inequality for `q`, all pivots but `100 δ₁ n` give a separating bipartition,
-  and the pivot, read from `⌈log₂ n⌉ + Kc` coins, avoids them with probability at least
-  `1 - 100 δ₁ - n / 2^(⌈log₂ n⌉ + Kc)`. The probability `1 - δ` comes from the degree ratio
-  `r = t / s = 2^41 R`, `R = max ⌈1/δ⌉ 100`, with `Kc = ⌈log₂ (4R)⌉`, and a separation growing
-  with it: the analysis needs the separation `Cs log (1/wmin)` and the sample size
-  `((d + 1)/wmin)^(Cs (log (1/wmin) + 1))` for some `Cs = O(R²)`, which `C ⌈1/δ⌉^C` covers for
-  `C ≥ 2^106`.
-* **The running time** `poly(|x|) · d^O(⌈1/δ⌉ log (1/wmin))`
-  ([Separating/PolyTime.lean](Separating/PolyTime.lean),
-  [Separating/RunTime.lean](Separating/RunTime.lean)): the solver is run with the budget
-  `(d + 5)^(2t + 1) (|P| + 2)³` rather than its default `(|P| + 2)^(2t + 1)`, which would give
-  `|x|^O(log (1/wmin))`. Its correctness is proved for every budget that suffices
-  (`SoS.Correct.core_correct_of_budget` in
-  [../Background/SumOfSquares/Algorithm/Correct.lean](../Background/SumOfSquares/Algorithm/Correct.lean)),
-  and the powers `⟨u, v⟩^p` in the program are cut at the budget. One machine serves all `δ`: it
-  computes `R` from `δ` and writes it and the budget in unary, and the list program takes `r` and
-  `Kc` as part of its input, so the degree of its polynomial time bound does not depend on `δ`.
-  For `δ ≤ 0` it outputs nothing.
-
-[Separating/Main.lean](Separating/Main.lean) puts the parts together.
-
 ### Theorem 1.3: small radius
 
 The algorithm ([SmallRadius/Alg.lean](SmallRadius/Alg.lean)) is a sum-of-squares clustering in the
@@ -360,11 +365,12 @@ Maximizing `∑ᵢ wᵢ` in every round means that the cluster sizes need not be
 
 | Files | Content |
 | --- | --- |
+| [Model.lean](Model.lean), [Challenge.lean](Challenge.lean) | Mixtures with one covariance, rounded samples, randomized algorithms and their time bounds, and the statements. |
 | [Common/](Common/) | The good event and its probability (`Good`, `GoodProb`, `Glue`), its uniform form (`Uniform`, `UniformProof`), Gaussian moments, Hermite polynomials, the mismatch lemma, and the input of the algorithms. |
+| [Separating/](Separating/) | Theorem 1.1: whitening and the model quantities (`Whiten`, `Setup`, `MomentClose`), the program and the algorithm (`Program`, `Alg`), the analysis (`Feasible`, `PseudoAnalysis`, `Rounding`, `Coins`), the running time (`PolyTime`, `RunTime`) and `Main`. |
 | [ColinearSoS/](ColinearSoS/) | Theorem 1.2: the programs and the algorithm (`Program`, `Alg`), the analysis (`Defs`, `Poly`, `Frame`, `Bernstein`, `Ratios`, `MomentPoly`, `PseudoAnalysis`, `Rounding`, `Correct`), the running time (`PolyTime`, `RunTime`) and `Main`. |
 | [Colinear/](Colinear/) | The line clustering (`OneDim`, `OneDimCorrect`, `OneDimApply`) and the covariance comparison (`Moments`) used for Theorem 1.2, the basis used for the whitening of Theorems 1.1 and 1.2 (`Basis`), and the second proof of Theorem 1.2: the algorithm (`Alg`), its analysis (`HermiteScore`, `Population`, `Line`, `Gradient`, `Direction`, `Cast`, `Correct`), its running time (`PolyTime*`) and `Main`. |
-| [Separating/](Separating/) | Theorem 1.1: whitening and the model quantities (`Whiten`, `Setup`, `MomentClose`), the program and the algorithm (`Program`, `Alg`), the analysis (`Feasible`, `PseudoAnalysis`, `Rounding`, `Coins`), the running time (`PolyTime`, `RunTime`) and `Main`. |
 | [SmallRadius/](SmallRadius/) | Theorem 1.3: parameters and the standard frame (`Params`, `Frame`, `GoodProb`, `Whiten`, `MomentSoS`), the program (`Program`, `RawAlg`, `MomentAxiom`, `Feasible`), identifiability (`Ident*`), rounding and peeling (`RoundTable`, `RoundStep`, `Coins`, `Alg`, `Peel`), the running time (`Budget`, `PolyTime*`, `RunTime`) and `Main`. |
-| [Solution.lean](Solution.lean) | The three theorems from the `Main` files. |
+| [Solution.lean](Solution.lean) | The three theorems from the `Main` files, checked by `lake comparator` ([comparator.json](comparator.json)). |
 
 *Formalized by [Claude Code](https://claude.com/claude-code).*

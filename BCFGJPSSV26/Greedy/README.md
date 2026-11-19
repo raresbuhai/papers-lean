@@ -9,7 +9,8 @@ time `BCFGJPSSV26.Greedy.algFor_polytime` ([PolyTime/Main.lean](PolyTime/Main.le
 
 The algorithm is the log-adaptive greedy of [BCFGJPSSV26a, Section 5 and Appendices D and E] with
 the bid `β(α, d) = [α - 1.224 d]⁺`, whose solutions for two opening costs are merged as in
-[CGLSS25, Section 3.5]. Its analysis rests on the bound `2 - 0.224² = 1.949824` on the
+[CGLSS25, Section 3.5] (Cohen-Addad, Grandoni, Lee, Schwiegelshohn, Svensson, STOC 2025,
+[arXiv:2503.10972](https://arxiv.org/abs/2503.10972)). Its analysis rests on the bound `2 - 0.224² = 1.949824` on the
 factor-revealing program [BCFGJPSSV26a, Theorem 4.4], from the library
 [`KMedian195`](../../Imported/KMedian195). Along the way it proves the robust LMP guarantee
 `BCFGJPSSV26.Greedy.robust_lmp` ([LMP.lean](LMP.lean)), which Theorem 1.4 ([../FL](../FL)) uses.
@@ -57,7 +58,7 @@ factor-revealing program [BCFGJPSSV26a, Theorem 4.4], from the library
    the positive client–facility distances, `d̃ = min (d / t + 1, M)` off the diagonal with
    `t = ε' Λ / n` and `M = 8 n² / ε' + 1`; the core runs on every guess, and the cheapest output by
    exact cost is kept.
-6. **Constants** (`Constants.lean`): `δ ∈ (ε/200, ε/100)` for `ε ≤ 1` and `δ = 1/100` for
+6. **Constants** ([Constants.lean](Constants.lean)): `δ ∈ (ε/200, ε/100)` for `ε ≤ 1` and `δ = 1/100` for
    `1 < ε < 4`; for `ε ≥ 4` the local search of Part II (`BCFGJPSSV26.Stable.localSearch`, swaps of
    size `24 · 201`), which costs at most `4 opt k` with `k` facilities. The two bounds on the
    number of facilities, `⌊log₂ n⌋ ⌈1/δ²⌉` and `6R`, are at most `10¹⁰ log n / ε²`

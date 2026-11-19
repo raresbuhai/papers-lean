@@ -9,7 +9,7 @@ public import Mathlib.Probability.Distributions.Gaussian.Multivariate
 # The invariance principle: definitions
 
 Definitions for the invariance principle used in the proof of It Ain't Over Till It's Over
-(`BHSV25/BK/README.md`, Section 7), copied from `BGHKLMM26/RobustMIS/Defs.lean` (papers do not
+(`BHSV25/BK/AintProof.lean`), copied from `BGHKLMM26/RobustMIS/Defs.lean` (papers do not
 import each other), with the namespace changed to `BHSV25.BK.Aint` and only the parts used here
 kept.
 

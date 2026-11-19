@@ -1,8 +1,13 @@
 # BB20: Learning restricted Boltzmann machines with sparse latent variables
 
+Bresler, Buhai. *Learning restricted Boltzmann machines with sparse latent variables*. NeurIPS
+2020. [arXiv:2006.04166](https://arxiv.org/abs/2006.04166). Numbers refer to the arXiv version
+(v2).
+
 The main results are [BB20, Theorems 4, 6, 11 and 12], stated in [Challenge.lean](Challenge.lean)
 with the definitions of [Model.lean](Model.lean) and proved in [Solution.lean](Solution.lean), with
-only the standard axioms; `lake comparator` checks them. Theorem 4 is the key structural result:
+only the standard axioms; `lake comparator` checks them (see
+[Checking a paper](../README.md#checking-a-paper)). Theorem 4 is the key structural result:
 when few latent variables touch the neighbourhood of `u`, a small set of neighbours carries a
 fixed fraction of the information that a large one does. Theorem 6 learns the neighbourhoods of the
 Markov random field of the observed variables in time `poly · (n + 2)^{2^s}`. Theorem 11 learns, with no
@@ -15,15 +20,13 @@ and 11 are larger than the paper's, and their running times are polynomial in th
 The formal proof follows the paper's argument in outline, though some of its steps take a
 different route (see [below](#how-the-proof-is-implemented)).
 
-Numbers refer to the arXiv version (v2).
-
 ## The statements
 
 | Result | Lean name | Content |
 | --- | --- | --- |
 | Theorem 4 (Lemma 10) | `nu_subset_bound` | If `I` is a set of MRF neighbours of `u`, and `u`, `I`, `S` are disjoint, then some `I' ⊆ I` with `\|I'\| ≤ 2^s` has `ν_{u,I'\|S} ≥ (4\|I\|)^{-2^s} (1/\|I\|)^{2^s(2^s+1)} ν_{u,I\|S}`. |
 | Theorem 6 | `structure_learning` | A Turing machine running in time `poly(\|x\|) · (n + 2)^{2^s}` recovers every MRF neighbourhood with probability at least `1 - ω` from `sampleSize α γ d D s n ω` samples. |
-| Theorem 11 | `structure_learning_strong` | With no bound on the minimum potential, a Turing machine running in time `poly(\|x\|) · (n + 2)^{2^s}` finds, for every variable, a set of its MRF neighbours containing all neighbours joined to it by a coefficient of absolute value at least `ζ`, with probability at least `1 - ω` from `sampleSize (ζη) γ d D s n ω` samples. |
+| Theorem 11 | `structure_learning_strong` | With no bound on the minimum potential, a Turing machine with the running time of Theorem 6 finds, for every variable, a set of its MRF neighbours containing all neighbours joined to it by a coefficient of absolute value at least `ζ`, with probability at least `1 - ω` from `sampleSize (ζη) γ d D s n ω` samples. |
 | Theorem 12 | `prediction_error` | Given sets of at most `D` variables containing the `ζ`-strong neighbours, with `ζ ≤ √ε / (D^d √(1 + e^{2γ}))`, every near-minimizer of the empirical logistic loss over the `ℓ₁` ball of radius `2γ` predicts every variable with mean squared error at most `ε`, with probability at least `1 - δ`, from `C γ² ln(8 n 2^D / δ) / ε²` samples. |
 
 * **The model** ([Model.lean](Model.lean)): an RBM with `n` observed and `m` latent `±1`
@@ -31,14 +34,15 @@ Numbers refer to the arXiv version (v2).
   coefficients are the clique potentials, and the MRF neighbourhood of `u` is the set of
   variables sharing a nonzero coefficient with it. The parameters (minimum potential `α`, width
   `γ`, latent degree `d`, MRF degree `D`, and `s`) enter as bounds.
-* **Sample sizes**: explicit, of the form of the paper's, with `δ = σ(-2γ)`, `α²` in place of
-  `4α²` and `max(1, C(D, d-1))` in place of `C(D, d-1)` in `τ`, `L = 2^s · 8/τ'²` in place of
-  `8/τ'²`, and, for Theorem 11, the paper's `η` multiplied by `δ^{D/2}/√2`. The paper's sample
-  sizes do not follow from its analysis, and for Theorem 11 they fail.
 * **Algorithms** are deterministic multitape Turing machines (`BB20.RunsInTime`), given `n`, the
   samples as bits, and the parameter bounds. Their time `(|x| + 2)^c (n + 2)^{2^s}` on every input
   is polynomial in the number of samples, in `n` and in the bit lengths of the parameter bounds,
   times `(n + 2)^{2^s}`; the paper counts word-RAM operations.
+* **Sample sizes** (Theorems 6 and 11): explicit, of the form of the paper's, with `δ = σ(-2γ)`,
+  `α²` in place of `4α²` and `max(1, C(D, d-1))` in place of `C(D, d-1)` in `τ`,
+  `L = 2^s · 8/τ'²` in place of `8/τ'²`, and, for Theorem 11, the paper's `η` multiplied by
+  `δ^{D/2}/√2`. The paper's sample sizes do not follow from its analysis, and for Theorem 11 they
+  fail.
 * **Theorem 12** is stated for fixed estimates of the neighbourhoods (any sets of at most `D`
   variables containing the `ζ`-strong neighbours) and for every near-minimizer of the empirical
   risk, within `ε/4`, with an absolute constant `C`; it states no running time for finding
@@ -137,6 +141,7 @@ applies it to the samples. The constant is `C = 2048`.
 
 | Files | Content |
 | --- | --- |
+| [Model.lean](Model.lean), [Challenge.lean](Challenge.lean) | RBMs and their Markov random fields, MRF neighbourhoods, sample sizes, Turing machines, and the statements. |
 | [Basic.lean](Basic.lean), [Basic/Cube.lean](Basic/Cube.lean) | The observed law, characters and Walsh inversion, the local field, conditional probabilities, the Markov property. |
 | [Structural.lean](Structural.lean), [Structural/](Structural/) | Theorem 4: `Latent` (Lemmas 13, 14), `Pattern` (Lemmas 15, 7, 9), `NonCancel` (Lemmas 16, 8), `Pigeonhole` (Lemma 10). |
 | [LowerBound.lean](LowerBound.lean), [LowerBound/](LowerBound/) | The lower bound on `ν`: `CondExp` (conditional expectations given `X_S`), `Field` (flips of the local field). |

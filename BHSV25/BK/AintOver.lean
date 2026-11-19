@@ -19,9 +19,9 @@ Over Till It's Over" [MOO10, Theorem 4.9] in the probability form `BHSV25.BK.ItA
 average of `g` on `C_D(z)` is at least `1 - δ` with probability at most `ζ / 2` once the
 influences are small, and `(1 - δ)^t ≤ ζ / 2` for large `t`. Bansal and Khot use the same
 theorem. The probability form (`BHSV25.BK.itAintOverProb`) is proved in
-`BHSV25/BK/AintProof.lean` (`BHSV25.BK.Aint.itAintOverProb_main`; route in `BHSV25/BK/README.md`,
-Section 7): an invariance principle between the three-valued ensemble of the random subcube and
-uniform signs, and reverse hypercontractivity on the cube.
+`BHSV25/BK/AintProof.lean` (`BHSV25.BK.Aint.itAintOverProb_main`): an invariance principle
+between the three-valued ensemble of the random subcube and uniform signs, and reverse
+hypercontractivity on the cube.
 
 Reference: E. Mossel, R. O'Donnell, K. Oleszkiewicz, *Noise stability of functions with low
 influences: invariance and optimality*, Annals of Mathematics 171 (2010), Theorem 4.9.
