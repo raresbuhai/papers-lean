@@ -15,9 +15,8 @@ public import Background.SumOfSquares.PowerSOS
 * `SoS.DerivesNq.ball_pow` and `dehomogenize` remove powers of the squared norm.
 * `SoS.DerivesNq.sqrt_sub`, `sqrt_add`, and `root` take roots of constant upper bounds.
 
-The root rules use additive norm bounds in place of the maxima in the design notes; their
-statements give the explicit constants. The systems remain lists, so composition counts list
-entries, including repeated constraints.
+The root rules use additive norm bounds; their statements give the explicit constants. The
+systems remain lists, so composition counts list entries, including repeated constraints.
 -/
 
 @[expose] public section
