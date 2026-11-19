@@ -1,6 +1,6 @@
 # Formalized papers
 
-[![CI](https://github.com/raresbuhai/formalization-of-my-research/actions/workflows/ci.yml/badge.svg)](https://github.com/raresbuhai/formalization-of-my-research/actions/workflows/ci.yml)
+[![CI](https://github.com/raresbuhai/papers-lean/actions/workflows/ci.yml/badge.svg)](https://github.com/raresbuhai/papers-lean/actions/workflows/ci.yml)
 
 Lean 4 formalizations of papers by [Rares-Darius Buhai](https://raresbuhai.com/), each with its main
 results stated in `Challenge.lean` and proved in `Solution.lean`:
@@ -60,8 +60,8 @@ Install Lean with [elan](https://github.com/leanprover/elan); it reads the versi
 `lean-toolchain`. Then:
 
 ```sh
-git clone https://github.com/raresbuhai/formalization-of-my-research.git
-cd formalization-of-my-research
+git clone https://github.com/raresbuhai/papers-lean.git
+cd papers-lean
 scripts/get-cache.sh  # download prebuilt Mathlib and complexitylib
 lake build            # everything, or `lake build BKS23` for one paper
 ```
