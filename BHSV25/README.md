@@ -322,4 +322,4 @@ of `k`. The analysis:
 | [Planted/FullCorrect.lean](Planted/FullCorrect.lean), [Planted/FullPolyTime.lean](Planted/FullPolyTime.lean), [Planted/FullThm.lean](Planted/FullThm.lean) | Theorem 7.17: one good coloring, the polynomial-time certificate, the probability and the theorem. |
 | [Solution.lean](Solution.lean) | The fifteen theorems, checked by `lake comparator` ([comparator.json](comparator.json)). |
 
-*Formalized by [Claude Code](https://claude.com/claude-code).*
+*Formalized with [Claude Code](https://claude.com/claude-code).*

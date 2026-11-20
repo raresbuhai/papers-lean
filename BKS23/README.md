@@ -175,4 +175,4 @@ The module doc of [Challenge.lean](Challenge.lean) explains each choice.
 | [Assembly.lean](Assembly.lean) | Part (2) from the parts. |
 | [Solution.lean](Solution.lean) | The two parts, checked by `lake comparator` ([comparator.json](comparator.json)). |
 
-*Formalized by [Claude Code](https://claude.com/claude-code).*
+*Formalized with [Claude Code](https://claude.com/claude-code).*

@@ -131,4 +131,4 @@ test in binary. The algorithm reads at most `n² b` coins, so it runs within
 | [PolyTime.lean](PolyTime.lean), [RunTime.lean](RunTime.lean) | Polynomial-time certificates (`BBKS24.Alg.algN_polytime`) and the running time (`BBKS24.Alg.exists_runsInTime`). |
 | [Solution.lean](Solution.lean) | The theorem, checked by `lake comparator` ([comparator.json](comparator.json)). |
 
-*Formalized by [Claude Code](https://claude.com/claude-code).*
+*Formalized with [Claude Code](https://claude.com/claude-code).*

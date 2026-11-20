@@ -125,4 +125,4 @@ derive the statements of Theorem 4.1 and Lemma 5.1.
 | [Assembly.lean](Assembly.lean), [Paper/](Paper/) | Theorem 1.2, Theorem 4.1 and Lemma 5.1 from the parts. |
 | [Solution.lean](Solution.lean) | The three results, checked by `lake comparator` ([comparator.json](comparator.json)). |
 
-*Formalized by [Claude Code](https://claude.com/claude-code).*
+*Formalized with [Claude Code](https://claude.com/claude-code).*

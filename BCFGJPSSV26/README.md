@@ -152,4 +152,4 @@ commit `d87e2a20376896ab72fe005a493b3af970a0f82d`. All of its code was written b
 | [FL/PolyTimeCtx.lean](FL/PolyTimeCtx.lean), [FL/PolyTime.lean](FL/PolyTime.lean) | Theorem 1.4: polynomial time. |
 | [Solution.lean](Solution.lean) | The four theorems, checked by `lake comparator` ([comparator.json](comparator.json)). |
 
-*Formalized by [Claude Code](https://claude.com/claude-code).*
+*Formalized with [Claude Code](https://claude.com/claude-code).*

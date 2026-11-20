@@ -237,4 +237,4 @@ low-degree norm and the high-degree part:
 | [SQ/Main.lean](SQ/Main.lean), [SQ/Main/](SQ/Main) | Theorem C.6. |
 | [Solution.lean](Solution.lean) | The three theorems, checked by `lake comparator` ([comparator.json](comparator.json)). |
 
-*Formalized by [Claude Code](https://claude.com/claude-code).*
+*Formalized with [Claude Code](https://claude.com/claude-code).*

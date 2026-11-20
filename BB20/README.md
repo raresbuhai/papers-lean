@@ -153,4 +153,4 @@ applies it to the samples. The constant is `C = 2048`.
 | [Prediction.lean](Prediction.lean), [Prediction/](Prediction/) | Theorem 12: `Logistic`, `Risk`, `Contraction`, `Deviation`, `Sample`. |
 | [Solution.lean](Solution.lean) | The four theorems from the parts, checked by `lake comparator` ([comparator.json](comparator.json)). |
 
-*Formalized by [Claude Code](https://claude.com/claude-code).*
+*Formalized with [Claude Code](https://claude.com/claude-code).*
