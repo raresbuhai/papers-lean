@@ -142,4 +142,4 @@ depend on `ε`.
 | [Spectral/Main.lean](Spectral/Main.lean) | Theorem 3.1 from the parts. |
 | [Solution.lean](Solution.lean) | The two theorems, checked by `lake comparator` ([comparator.json](comparator.json)). |
 
-*Formalized with [Claude Code](https://claude.com/claude-code).*
+*Formalized with Claude (Anthropic).*

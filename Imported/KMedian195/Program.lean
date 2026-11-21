@@ -1,5 +1,5 @@
 /-
-Copied from `epfl-thl2/project-k-median` (written by Codex),
+Copied from `epfl-thl2/project-k-median` (written with GPT (OpenAI)),
 commit `d87e2a20376896ab72fe005a493b3af970a0f82d`, file `bound-195/Challenge.lean` (the statements
 that the source checks with the comparator), without its two theorems, which are proved in
 `Imported/KMedian195/Main.lean`.

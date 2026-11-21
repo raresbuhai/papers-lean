@@ -121,4 +121,4 @@ of the cuts happens, so it computes the true answer.
 | [Algorithm/Loop.lean](Algorithm/Loop.lean) | The ellipsoid loop. The step avoids `√(aᵀPa)` by `(Pa)ᵢ/√(aᵀPa) = sign((Pa)ᵢ) √((Pa)ᵢ²/aᵀPa)`, with an integer square root; every number is rounded down to a multiple of `2^-p` and clamped. The step is within `2/2^p` of the exact one when the clamps do not act (`stepL_spec`), and keeps the shape symmetric. The loop remembers the best center declared feasible (`best_spec`); [../Ellipsoid.lean](../Ellipsoid.lean) bounds the step (`abs_stepCenter_sub_le`, `abs_stepShape_le`). |
 | [Algorithm/Core.lean](Algorithm/Core.lean), [Algorithm/PolyTime.lean](Algorithm/PolyTime.lean) | `core` and its certificate (`core_polytime`). The loop's states stay small: every number is a multiple of `2^-p` at most `2^b` (`length_encState_le`). |
 
-*Formalized with [Claude Code](https://claude.com/claude-code).*
+*Formalized with Claude (Anthropic).*

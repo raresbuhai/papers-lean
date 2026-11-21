@@ -198,4 +198,4 @@ They agree with those of the proof: OpenAI's Walsh characters are `(-1)^{|S|} χ
 | [RobustMIS/Statement.lean](RobustMIS/Statement.lean) | Theorem 7.1 in the definitions of [Boolean.lean](Boolean.lean). |
 | [Solution.lean](Solution.lean) | The six theorems, checked by `lake comparator` ([comparator.json](comparator.json)). |
 
-*Formalized with [Claude Code](https://claude.com/claude-code).*
+*Formalized with Claude (Anthropic).*

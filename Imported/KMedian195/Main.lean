@@ -1,5 +1,5 @@
 /-
-Copied from `epfl-thl2/project-k-median` (written by Codex),
+Copied from `epfl-thl2/project-k-median` (written with GPT (OpenAI)),
 commit `d87e2a20376896ab72fe005a493b3af970a0f82d`, the last three theorems of
 `bound-195/KMedian195/FactorRevealingPrimal.lean`. The first and last are the two theorems of
 `bound-195/Challenge.lean`, which the source checks with the comparator.

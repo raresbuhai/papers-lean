@@ -225,4 +225,4 @@ astronomically large.
 | [Assembly/](Assembly/) | The schedule, the list programs, the running time and the main theorems. |
 | [Solution.lean](Solution.lean) | The two theorems from [Assembly/Main.lean](Assembly/Main.lean), checked by `lake comparator` ([comparator.json](comparator.json)). |
 
-*Formalized with [Claude Code](https://claude.com/claude-code) and [Codex](https://openai.com/codex/).*
+*Formalized with Claude (Anthropic) and GPT (OpenAI).*

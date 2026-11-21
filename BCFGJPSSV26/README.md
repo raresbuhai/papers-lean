@@ -118,8 +118,8 @@ The bound on the factor-revealing program [BCFGJPSSV26a, Theorem 4.4] is
 [Greedy/FRP.lean](Greedy/FRP.lean) applies it with `γ = 1.224`, so `2 - 0.224² = 1.949824`. The
 library [KMedian195](../Imported/KMedian195) is copied from the project `bound-195` of
 [`epfl-thl2/project-k-median`](https://github.com/epfl-thl2/project-k-median) (Apache-2.0), at
-commit `d87e2a20376896ab72fe005a493b3af970a0f82d`. All of its code was written by Codex; its
-[README](../Imported/KMedian195/README.md) lists the changes made for our Lean and Mathlib.
+commit `d87e2a20376896ab72fe005a493b3af970a0f82d`. All of its code was written with GPT (OpenAI);
+its [README](../Imported/KMedian195/README.md) lists the changes made for our Lean and Mathlib.
 
 ## Map of the files
 
@@ -152,4 +152,4 @@ commit `d87e2a20376896ab72fe005a493b3af970a0f82d`. All of its code was written b
 | [FL/PolyTimeCtx.lean](FL/PolyTimeCtx.lean), [FL/PolyTime.lean](FL/PolyTime.lean) | Theorem 1.4: polynomial time. |
 | [Solution.lean](Solution.lean) | The four theorems, checked by `lake comparator` ([comparator.json](comparator.json)). |
 
-*Formalized with [Claude Code](https://claude.com/claude-code).*
+*Formalized with Claude (Anthropic).*

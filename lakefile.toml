@@ -36,9 +36,9 @@ name = "OAI"
 srcDir = "Imported"
 leanOptions = { weak.linter.mathlibStandardSet = false, weak.linter.style.header = false, weak.linter.unusedTactic = false }
 
-# Files copied from github.com/epfl-thl2/project-k-median (written by Codex, Apache-2.0), adapted
-# to our Lean and Mathlib: the 1.95 bound on the factor-revealing program of arXiv:2610.18144
-# (Theorem 4.4). See Imported/KMedian195/README.md. Auto-bound implicits as in the source; the
+# Files copied from github.com/epfl-thl2/project-k-median (written with GPT (OpenAI), Apache-2.0),
+# adapted to our Lean and Mathlib: the 1.95 bound on the factor-revealing program of
+# arXiv:2610.18144 (Theorem 4.4). See Imported/KMedian195/README.md. Auto-bound implicits as in the source; the
 # overlapping-instances linter is off for its many duplicated `[NeZero n]` binders.
 [[lean_lib]]
 name = "KMedian195"

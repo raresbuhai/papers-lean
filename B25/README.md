@@ -117,4 +117,4 @@ first impossible for small `n` ([Lasso/Main.lean](Lasso/Main.lean)).
 | [Lasso/Main.lean](Lasso/Main.lean) | Corollary 1.6. |
 | [Solution.lean](Solution.lean) | The four results, checked by `lake comparator` ([comparator.json](comparator.json)). |
 
-*Formalized with [Claude Code](https://claude.com/claude-code).*
+*Formalized with Claude (Anthropic).*

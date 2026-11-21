@@ -373,4 +373,4 @@ Maximizing `∑ᵢ wᵢ` in every round means that the cluster sizes need not be
 | [SmallRadius/](SmallRadius/) | Theorem 1.3: parameters and the standard frame (`Params`, `Frame`, `GoodProb`, `Whiten`, `MomentSoS`), the program (`Program`, `RawAlg`, `MomentAxiom`, `Feasible`), identifiability (`Ident*`), rounding and peeling (`RoundTable`, `RoundStep`, `Coins`, `Alg`, `Peel`), the running time (`Budget`, `PolyTime*`, `RunTime`) and `Main`. |
 | [Solution.lean](Solution.lean) | The three theorems from the `Main` files, checked by `lake comparator` ([comparator.json](comparator.json)). |
 
-*Formalized with [Claude Code](https://claude.com/claude-code).*
+*Formalized with Claude (Anthropic).*
